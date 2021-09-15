@@ -23,39 +23,40 @@
 
     <script type="text/javascript">
       window.onload = function () {
-        //Create Scene and render
+        // define colors
+        const RED = [1, 0, 0];
+        const GREEN = [0, 1, 0];
+        const WHITE = [1, 1, 1];
+        const BLACK = [0, 0, 0];
+
+        //Create scene/render
         r = new X.renderer3D();
         r.init();
+        r.camera.position = [0, 500, 0];
 
-        // Create cube and add cube to the render
-        // c = new X.cube();
-        // r.add(c);
+        cubeMatrix = [];
 
-        // // Create 2nd cube, change color, postion, and add to render
-        // c2 = new X.cube();
-        // c.color = [1, 0.5, 0.5];
-        // c2.center = [20, 0, 0];
-        // r.add(c);
-        // r.add(c2);
-
-        // c3 = new X.cube();
-        // c3.color = [0.2, 0.5, 0.7];
-        // c3.center = [0, 20, 0];
-        // r.add(c3);
-
-        //Initalize 9x9 pixels
+        // Initalize 9x9 cubes and create a Matrix to hold
+        // each cube so I can change the colors later
         for (var i = 0; i < 9; i++) {
-          c4 = new X.cube();
-          c4.center = [30 + i * 30, 0, 0];
-          //   c4.color = [0, 0, 0];
-          r.add(c4);
+          cubeMatrix.push([]);
+          for (var j = 0; j < 9; j++) {
+            cube = new X.cube();
+            cube.center = [i * 23, 0, j * 23];
+            cube.color = GREEN;
+            r.add(cube);
+            cubeMatrix[i].push(cube);
+          }
         }
+        r.render();
+        console.log(cubeMatrix);
+        cubeMatrix[0][8].color = RED;
         r.render();
       };
     </script>
   </head>
   <body>
     <h1>CS460 Assignment 2</h1>
-    <div id="logo"><img style="height: 60px" src="gfx/cs460.png" /></div>
+    <div id="logo"><img style="height: 40px" src="gfx/cs460.png" /></div>
   </body>
 </html>
