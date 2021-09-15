@@ -1,34 +1,61 @@
 <html>
   <head>
-    <title>Hello World</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta content="utf-8" http-equiv="encoding" />
+    <title>CS460 Assignment 2</title>
     <style>
       body {
-        margin: 0;
         background-color: black;
-        color: white;
+        color: white; /* font color */
         font-family: sans-serif;
       }
+
       #logo {
-        height: 60px;
         position: absolute;
-        top: 10px;
         right: 10px;
+        top: 10px;
       }
     </style>
+    <script
+      type="text/javascript"
+      src="https://get.goXTK.com/xtk_edge.js"
+    ></script>
+
+    <script type="text/javascript">
+      window.onload = function () {
+        //Create Scene and render
+        r = new X.renderer3D();
+        r.init();
+
+        // Create cube and add cube to the render
+        // c = new X.cube();
+        // r.add(c);
+
+        // // Create 2nd cube, change color, postion, and add to render
+        // c2 = new X.cube();
+        // c.color = [1, 0.5, 0.5];
+        // c2.center = [20, 0, 0];
+        // r.add(c);
+        // r.add(c2);
+
+        // c3 = new X.cube();
+        // c3.color = [0.2, 0.5, 0.7];
+        // c3.center = [0, 20, 0];
+        // r.add(c3);
+
+        //Initalize 9x9 pixels
+        for (var i = 0; i < 9; i++) {
+          c4 = new X.cube();
+          c4.center = [30 + i * 30, 0, 0];
+          //   c4.color = [0, 0, 0];
+          r.add(c4);
+        }
+        r.render();
+      };
+    </script>
   </head>
   <body>
-    <h1 id="header">CS460 Assignment 2</h1>
-    <img id="logo" src="gfx/cs460.png" />
+    <h1>CS460 Assignment 2</h1>
+    <div id="logo"><img style="height: 60px" src="gfx/cs460.png" /></div>
   </body>
-  <script type="text/javascript">
-    console.log("Hello CS460");
-    var num = 8;
-    var myFloat = 5.6;
-    var myText = "Hello World";
-    var bol = true;
-    console.log(num, myFloat, myText, bol);
-
-    var h = document.getElementById("header");
-    h.innerText("UPDATED header");
-  </script>
 </html>
