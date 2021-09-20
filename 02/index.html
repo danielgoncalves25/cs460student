@@ -87,28 +87,28 @@
         lightUpCubes = [];
         numOfLightCubes = 0;
 
-        // Change a cubes color every second
+        // Change a cubes color every half second
         lightTree = setInterval(() => {
           if (numOfLightCubes != 7) {
             row = getRandomInt(0, 8);
-            col = getRandomInt(0, 8);
+            col = getRandomInt(0, 5);
             while (cubeMatrix[row][col].color == BLACK) {
               row = getRandomInt(0, 8);
-              col = getRandomInt(0, 8);
+              col = getRandomInt(0, 5);
             }
             newColor = getRandomInt(0, 2);
             cubeMatrix[row][col].color = lights[newColor];
             numOfLightCubes += 1;
             lightUpCubes.push(cubeMatrix[row][col]);
           }
-        }, 1000);
+        }, 500);
 
-        // Change a cube back to Green every 2 seconds
+        // Change a cube back to Green every second
         setInterval(() => {
           lightUpCubes[0].color = GREEN;
           lightUpCubes.shift();
           numOfLightCubes -= 1;
-        }, 2000);
+        }, 1000);
       };
     </script>
   </head>
