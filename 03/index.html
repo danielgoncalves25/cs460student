@@ -21,30 +21,13 @@
     ></script>
     <script>
       window.onload = function () {
-        const getRandom = (max) => {
-          min = 0;
-          max = Math.floor(max);
-          return Math.floor(Math.random() * (max - min + 1) + min);
-        };
         scene = new THREE.Scene();
 
-        colors = [0xe24726, 0xe3c21e, 0x3bce19, 0x1bad8c, 0x1056a6, 0xbc1ab1];
-        seenColors = new Set();
-
-        geos = [
-          new THREE.RingGeometry(10, 10, 22),
-          new THREE.BoxGeometry(10, 10, 10),
-          new THREE.ConeGeometry(5, 20, 32),
-          new THREE.SphereGeometry(10, 10, 10),
-          new THREE.TorusKnotGeometry(5, 3, 50, 10),
-          new THREE.OctahedronGeometry(10),
-        ];
-        seenGeos = new Set();
-        console.log(seenGeos.size);
         fov = 75;
         ratio = window.innerWidth / window.innerHeight;
         zNear = 1;
         zFar = 10000;
+        // console.log(ratio);
         camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
         camera.position.set(0, 0, 100);
 
@@ -55,9 +38,15 @@
         ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
 
-        light = new THREE.DirectionalLight(0xe24726, 5.0);
+        light = new THREE.DirectionalLight(0xffffff, 5.0);
         light.position.set(10, 100, 10);
         scene.add(light);
+
+        // now we add the cube
+        // geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+        // material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        // cube = new THREE.Mesh( geometry, material);
+        // scene.add(cube);
 
         //
         // The invisible plane
@@ -80,17 +69,23 @@
         //
 
         renderer.domElement.onclick = function (e) {
-          if (!e.shiftKey) {
-            e.preventDefault();
-            return false;
-          }
+          // if (!e.shiftKey) {
+          //   e.preventDefault();
+          //   return false;
+          // }
+
+          console.log("yes! you clicked!");
 
           pixel_coords = new THREE.Vector2(e.clientX, e.clientY);
+
+          console.log("Pixel coordinates", pixel_coords);
 
           vp_coords = new THREE.Vector2(
             (pixel_coords.x / window.innerWidth) * 2 - 1,
             -(pixel_coords.y / window.innerHeight) * 2 + 1
           );
+
+          console.log("Viewport coordinates", vp_coords);
 
           vp_coords_near = new THREE.Vector3(vp_coords.x, vp_coords.y, 0);
 
@@ -98,39 +93,15 @@
           raycaster.setFromCamera(vp_coords_near, camera);
           intersects = raycaster.intersectObject(invisible_plane);
 
-          colorIndex = getRandom(6);
-          geoIndex = getRandom(6);
-
-          if (seenColors.size === 6) {
-            seenColors.clear();
-            seenGeos.clear();
-          }
-          while (seenColors.has(colors[colorIndex])) {
-            // console.log("it has this color");
-            colorIndex = getRandom(6);
-          }
-          while (seenGeos.has(geos[geoIndex])) {
-            // console.log(`it has this ${geos[geoIndex].type}`);
-            geoIndex = getRandom(6);
-          }
-          console.log(geos[geoIndex], colors[colorIndex]);
-          geometry = geos[geoIndex];
-          material = new THREE.MeshStandardMaterial({
-            color: colors[colorIndex],
-          });
+          console.log("Ray to Invisible Plane", intersects[0].point);
           cube = new THREE.Mesh(geometry, material);
-          scene.add(cube);
 
-          seenColors.add(colors[colorIndex]);
-          seenGeos.add(geos[geoIndex]);
-
+          // update cube position
           cube.position.set(
             intersects[0].point.x,
             intersects[0].point.y,
             intersects[0].point.z
           );
-          console.log(seenGeos);
-          console.log(seenColors);
         };
       };
 
