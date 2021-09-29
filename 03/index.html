@@ -106,14 +106,11 @@
             seenGeos.clear();
           }
           while (seenColors.has(colors[colorIndex])) {
-            // console.log("it has this color");
             colorIndex = getRandom(6);
           }
           while (seenGeos.has(geos[geoIndex])) {
-            // console.log(`it has this ${geos[geoIndex].type}`);
             geoIndex = getRandom(6);
           }
-          // console.log(geos[geoIndex], colors[colorIndex]);
           geometry = geos[geoIndex];
           material = new THREE.MeshStandardMaterial({
             color: colors[colorIndex],
