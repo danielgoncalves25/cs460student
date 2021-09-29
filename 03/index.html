@@ -32,7 +32,7 @@
         seenColors = new Set();
 
         geos = [
-          new THREE.RingGeometry(10, 10, 22),
+          new THREE.RingGeometry(1, 5, 32),
           new THREE.BoxGeometry(10, 10, 10),
           new THREE.ConeGeometry(5, 20, 32),
           new THREE.SphereGeometry(10, 10, 10),
@@ -40,13 +40,13 @@
           new THREE.OctahedronGeometry(10),
         ];
         seenGeos = new Set();
-        console.log(seenGeos.size);
+        var totalObjects = 0;
         fov = 75;
         ratio = window.innerWidth / window.innerHeight;
         zNear = 1;
         zFar = 10000;
         camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
-        camera.position.set(0, 0, 100);
+        camera.position.set(0, 0, 600);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,7 +79,7 @@
         // ACTION!
         //
 
-        renderer.domElement.onclick = function (e) {
+        renderer.domElement.onmousemove = function (e) {
           if (!e.shiftKey) {
             e.preventDefault();
             return false;
@@ -113,7 +113,7 @@
             // console.log(`it has this ${geos[geoIndex].type}`);
             geoIndex = getRandom(6);
           }
-          console.log(geos[geoIndex], colors[colorIndex]);
+          // console.log(geos[geoIndex], colors[colorIndex]);
           geometry = geos[geoIndex];
           material = new THREE.MeshStandardMaterial({
             color: colors[colorIndex],
@@ -121,16 +121,18 @@
           cube = new THREE.Mesh(geometry, material);
           scene.add(cube);
 
-          seenColors.add(colors[colorIndex]);
-          seenGeos.add(geos[geoIndex]);
-
           cube.position.set(
             intersects[0].point.x,
             intersects[0].point.y,
             intersects[0].point.z
           );
-          console.log(seenGeos);
-          console.log(seenColors);
+
+          if (geos[geoIndex] != undefined || colors[colorIndex] != undefined) {
+            seenColors.add(colors[colorIndex]);
+            seenGeos.add(geos[geoIndex]);
+            totalObjects += 1;
+          }
+          console.log(totalObjects);
         };
       };
 
