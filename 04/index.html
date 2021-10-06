@@ -46,6 +46,7 @@
       final_position.z += u_offset.z;
 
       gl_Position = vec4( final_position, 1.);
+      gl_PointSize = 15.0;
 
     }
   </script>
@@ -143,52 +144,15 @@
       //
       // Part 1 Starts
       //
-      // var vertices = new Float32Array([
-      //   // top
-      //   -0.05, 0.01, 0, -0.05, 0.03, 0.0, 0.0, 0, 0,
-      //   // bottom
-      //   -0.05, 0.01, 0, -0.05, -0.05, 0, 0.025, -0.02, 0,
-      //   // middle
-      //   -0.05, 0.01, 0, 0.03, 0.01, 0, 0, -0.02, 0,
-      //   // front
-      //   0, -0.02, 0, 0.03, 0.01, 0, 0.05, -0.02, 0,
-      // ]);
-      vertices = new Float32Array([
-        -0.05,
-        0.05,
-        0.0, // 0
-
-        -0.05,
-        -0.05,
-        0.0, // 1
-
-        0.05,
-        -0.05,
-        0.0, // 2
-
-        -0.05,
-        -0.05,
-        0.0,
-
-        0.15,
-        -0.05,
-        0.0,
-
-        -0.05,
-        -0.15,
-        0.0, // traingle 2
-
-        0.15,
-        -0.5,
-        0.0,
-
-        0.15,
-        -0.05,
-        0.0,
-
-        0.05,
-        -0.15,
-        0.0, // triangle 3
+      var vertices = new Float32Array([
+        // top
+        -0.05, 0.01, 0, -0.05, 0.03, 0, 0, 0, 0,
+        // bottom
+        -0.05, 0.01, 0, -0.05, -0.05, 0, 0.025, -0.02, 0,
+        // middle
+        -0.05, 0.01, 0, 0.03, 0.01, 0, 0, -0.02, 0,
+        // front
+        0, -0.02, 0, 0.03, 0.01, 0, 0.05, -0.02, 0,
       ]);
 
       var v_buffer = gl.createBuffer();
@@ -210,7 +174,7 @@
     }
 
     function createObstacle() {
-      var vertices = new Float32Array([0.0, 0.0, 0.0]);
+      var vertices = new Float32Array([0.5, 0.5, 0]);
 
       var v_buffer = gl.createBuffer(); // create
       gl.bindBuffer(gl.ARRAY_BUFFER, v_buffer); // bind
@@ -220,8 +184,13 @@
       //
       // Part 2 Starts
       //
-      var offset = [0, 0, 0];
+      // inspired by this stackoverflow post https://stackoverflow.com/questions/13455042/random-number-between-negative-and-positive-value
+      offsetX = Math.random();
+      offsetX *= Math.round(Math.random()) ? 1 : -1;
+      offsety = Math.random();
+      offsety = offsetX *= Math.round(Math.random()) ? 1 : -1;
 
+      var offset = [offsetX, offsety, 0];
       //
       // Part 2 Ends
       //
