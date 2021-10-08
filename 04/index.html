@@ -73,6 +73,8 @@
     var obstacle_factor = 3; // Hint for the bonus!
     var direction_y = 0;
     var direction_x = 0;
+    var VELOCITY = 0.05;
+    var OBSTACLE_VELOCITY = 0.002;
 
     window.onload = function () {
       //************************************************************//
@@ -140,6 +142,7 @@
       animate();
     };
 
+    var airPlaneOffset = [-0.8, 0, 0];
     function createAirplane() {
       //
       // Part 1 Starts
@@ -164,17 +167,24 @@
       // Part 1 Ends
       //
 
-      var offset = [0, 0, 0];
+      // var offset = [0, 0, 0];
       var color = [0, 0, 0, 1];
 
       //
       // Bonus Part 3!
       //
-      return ["airplane", v_buffer, vertices, offset, color, gl.TRIANGLES];
+      return [
+        "airplane",
+        v_buffer,
+        vertices,
+        airPlaneOffset,
+        color,
+        gl.TRIANGLES,
+      ];
     }
 
     function createObstacle() {
-      var vertices = new Float32Array([0.5, 0.5, 0]);
+      var vertices = new Float32Array([0, 0, 0]);
 
       var v_buffer = gl.createBuffer(); // create
       gl.bindBuffer(gl.ARRAY_BUFFER, v_buffer); // bind
@@ -186,11 +196,11 @@
       //
       // inspired by this stackoverflow post https://stackoverflow.com/questions/13455042/random-number-between-negative-and-positive-value
       offsetX = Math.random();
-      offsetX *= Math.round(Math.random()) ? 1 : -1;
+      offsetX *= Math.round(Math.random()) ? 0.9 : -0.9;
       offsety = Math.random();
-      offsety = offsetX *= Math.round(Math.random()) ? 1 : -1;
+      offsety *= Math.round(Math.random()) ? 0.9 : -0.9;
 
-      var offset = [offsetX, offsety, 0];
+      var offset = [0.8, offsety, 0];
       //
       // Part 2 Ends
       //
@@ -249,14 +259,18 @@
     // Part 4 Starts
     //
     window.onkeyup = function (e) {
-      if (e.keyCode == 38) {
+      if (e.keyCode == 38 && airPlaneOffset[1] < 0.95) {
         // player pressed up
-      } else if (e.keyCode == 40) {
+        airPlaneOffset[1] += VELOCITY;
+      } else if (e.keyCode == 40 && airPlaneOffset[1] > -0.95) {
         // player pressed down
-      } else if (e.keyCode == 37) {
+        airPlaneOffset[1] -= VELOCITY;
+      } else if (e.keyCode == 37 && airPlaneOffset[0] > -0.95) {
         // player pressed left
-      } else if (e.keyCode == 39) {
+        airPlaneOffset[0] -= VELOCITY;
+      } else if (e.keyCode == 39 && airPlaneOffset[0] < 0.95) {
         // player pressed right
+        airPlaneOffset[0] += VELOCITY;
       }
     };
     //
@@ -278,7 +292,7 @@
         //
         // Bonus Part 2!
         //
-
+        OBSTACLE_VELOCITY += 0.001;
         framecounter = 0;
       }
 
@@ -324,6 +338,14 @@
           //
           // Bonus Part 1!
           //
+
+          current_offset[0] -= OBSTACLE_VELOCITY;
+          if (current_offset[0] < -1) {
+            offsety = Math.random();
+            offsety = offsety *= Math.round(Math.random()) ? 0.9 : -0.9;
+            current_offset[0] = 0.8;
+            current_offset[1] = offsety;
+          }
 
           // collision detection using the bounding box of this airplane
           if (detectCollision(bbox_plane, current_offset)) {
