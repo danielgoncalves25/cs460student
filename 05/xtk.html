@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta content="utf-8" http-equiv="encoding" />
+    <title>CS460 Assignment 2</title>
+    <style>
+      body {
+        background-color: black;
+        color: white; /* font color */
+        font-family: sans-serif;
+      }
+
+      #logo {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://get.goXTK.com/xtk_edge.js"
+    ></script>
+    <script type="text/javascript" src="dat.gui.min.js"></script>
+
+    <script type="text/javascript">
+      window.onload = function () {
+        // const dat = require("dat.gui");
+
+        // define colors
+        const RED = [1, 0, 0];
+        const GREEN = [0, 1, 0];
+        const BLUE = [0, 0, 1];
+        const YELLOW = [1, 1, 0];
+        const BLACK = [0, 0, 0];
+
+        //Create scene/render
+        r = new X.renderer3D();
+        r.init();
+        r.camera.position = [0, 0, 500];
+
+        cube = new X.cube();
+        // cube.center = [i * 23, j * 23, 0];
+        cube.color = BLUE;
+        r.add(cube);
+        cube.transform.rotateX(45);
+        cube.transform.rotateX(65);
+
+        r.render();
+
+        var gui = new dat.GUI();
+        var cubeGui = new gui.addFolder("cube");
+
+        cubeGui.add(cube, "visible");
+
+        var controller = {
+          rotateX: () => {
+            cube.transform.rotateX(45);
+          },
+          rotateY: () => {
+            cube.transform.rotateY(45);
+          },
+        };
+      };
+    </script>
+  </head>
+  <body>
+    <h1>CS460 Assignment 2</h1>
+    <!-- <div id="logo"><img style="height: 40px" src="gfx/cs460.png" /></div> -->
+  </body>
+</html>
