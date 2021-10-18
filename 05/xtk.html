@@ -47,45 +47,106 @@
       var r, c;
 
       window.onload = function () {
+        //XTK SETUP
         r = new X.renderer3D();
         r.container = "r1"; // only use the r1 div container for XTK
         r.init();
 
         c = new X.cube();
-
+        r.camera.position = [0, 0, 300];
         r.add(c);
 
         r.render();
 
+        //THREE.JS SETUP
+        fov = 75;
+        zNear = 1;
+        zFar = 10000;
+        scene = new THREE.Scene();
+        var r2 = document.getElementById("r2");
+        var ratio = r2.clientWidth / r2.clientHeight;
+        var camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        camera.position.set(0, 0, 300);
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(r2.clientWidth, r2.clientHeight);
+        r2.appendChild(renderer.domElement);
+
+        ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        light = new THREE.DirectionalLight(0xe24726, 5.0);
+        light.position.set(10, 100, 10);
+        scene.add(light);
+        controls = new THREE.TrackballControls(camera, renderer.domElement);
+        geometry = new THREE.TorusKnotGeometry(5, 3, 50, 10);
+        material = new THREE.MeshStandardMaterial({ color: 0xe3c21e });
+        cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+        animate();
+        function animate() {
+          requestAnimationFrame(animate);
+          controls.update();
+          renderer.render(scene, camera);
+        }
         // create the User Interface
+        var gui = new dat.GUI();
 
         // HELPER OBJECT
-        controller = {
-          rotateX: function () {
-            c.transform.rotateX(45);
+        var controller = {
+          rotateX: () => {
+            c.transform.rotateX(25);
+            cube.rotateX(25);
           },
-          rotateY: function () {
-            c.transform.rotateY(45);
+          rotateY: () => {
+            c.transform.rotateY(25);
+            cube.rotateY(25);
           },
-          rotateZ: function () {
-            c.transform.rotateZ(45);
+          rotateZ: () => {
+            c.transform.rotateZ(25);
+            cube.rotateZ(25);
+          },
+          threejs_color: 0xa44848,
+          "add new": () => {
+            // create new xtk cube
+            c = new X.cube();
+            c.center = [50, 50, 50];
+            r.add(c);
+
+            //create new three.js cube
+            geometry = new THREE.TorusKnotGeometry(5, 3, 50, 10);
+            material = new THREE.MeshStandardMaterial({ color: 0xe3c21e });
+            cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+            cube.position.set(50, 50, 50);
           },
         };
 
-        var gui = new dat.GUI();
-        var cubeGui = gui.addFolder("Cube");
-        cubeGui.add(c, "visible");
-        cubeGui.add(c, "opacity", 0, 1);
-        // cubeGui.add(c, "center");
-        cubeGui.addColor(c, "color");
-        cubeGui.add(c, "lengthX", 0, 100).onChange(function () {
-          c.modified(); // modify event of XTK's cube since
-          // we modify the vertices
-        });
-        cubeGui.add(controller, "rotateX");
-        cubeGui.add(controller, "rotateY");
-        cubeGui.add(controller, "rotateZ");
-        cubeGui.open();
+        var xtkUI = gui.addFolder("XTK");
+        xtkUI.add(c, "visible");
+        xtkUI.add(c, "opacity", 0, 1);
+        xtkUI.addColor(c, "color");
+        xtkUI.add(c, "lengthX", 0, 100).onChange(() => c.modified());
+        xtkUI.open();
+
+        var threejsUI = gui.addFolder("Three.js");
+        threejsUI.add(cube, "visible");
+        threejsUI
+          .add(cube.material, "opacity", 0, 1)
+          .onChange(() => (cube.material.transparent = true));
+        threejsUI
+          .addColor(controller, "threejs_color")
+          .onChange(() => cube.material.color.set(controller.threejs_color));
+        threejsUI.open();
+
+        var both = gui.addFolder("Both");
+        both.add(controller, "rotateX");
+        both.add(controller, "rotateY");
+        both.add(controller, "rotateZ");
+        both.add(controller, "add new");
+        both.open();
       };
     </script>
   </head>
