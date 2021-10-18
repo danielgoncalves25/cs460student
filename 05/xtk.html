@@ -34,6 +34,14 @@
       type="text/javascript"
       src="http://get.goXTK.com/xtk_xdat.gui.js"
     ></script>
+    <script
+      src="https://threejs.org/build/three.min.js"
+      type="text/javascript"
+    ></script>
+    <script
+      src="https://threejs.org/examples/js/controls/TrackballControls.js"
+      type="text/javascript"
+    ></script>
 
     <script type="text/javascript">
       var r, c;
@@ -68,7 +76,7 @@
         var cubeGui = gui.addFolder("Cube");
         cubeGui.add(c, "visible");
         cubeGui.add(c, "opacity", 0, 1);
-        cubeGui.add(c, "center");
+        // cubeGui.add(c, "center");
         cubeGui.addColor(c, "color");
         cubeGui.add(c, "lengthX", 0, 100).onChange(function () {
           c.modified(); // modify event of XTK's cube since
