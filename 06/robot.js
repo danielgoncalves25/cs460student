@@ -1,7 +1,6 @@
 class Robot {
   constructor(x, y, z) {
-    console.log("New Robot");
-
+    this.movement = "";
     this.head = new THREE.Bone();
     this.head.position.x = x;
     this.head.position.y = y;
@@ -90,6 +89,74 @@ class Robot {
     var helper = new THREE.SkeletonHelper(rGroup);
     scene.add(helper);
   }
+  raiseLeftArm() {
+    this.movement = "raiseLeftArm";
+  }
+  lowerLeftArm() {
+    this.movement = "lowerLeftArm";
+  }
+  kick() {
+    this.movement = "kick";
+  }
+  onKick() {
+    if (this.rightUpperLeg.quaternion.w < 0.72) {
+      this.movement = "kickDone";
+    } else {
+      var T = -Math.PI / 2;
+      this.rightUpperLeg.quaternion.slerp(
+        new THREE.Quaternion(Math.sin(T / 2), 0, 0, Math.cos(T / 2)),
+        0.1
+      );
+    }
+  }
 
-  onAnimate() {}
+  onAnimate() {
+    switch (this.movement) {
+      case "raiseLeftArm":
+        animateHelper(this.leftUpperArm.quaternion, "raise");
+        break;
+
+      case "lowerLeftArm":
+        animateHelper(this.leftUpperArm.quaternion, "lower");
+        break;
+      case "raiseRightArm":
+        animateHelper(this.rightUpperArm.quaternion, "raise");
+        break;
+
+      case "lowerRightArm":
+        animateHelper(this.rightUpperArm.quaternion, "lower");
+        break;
+
+      case "kick":
+        // this.onKick();
+        if (this.rightUpperLeg.quaternion.w < 0.72) {
+          this.movement = "kickDone";
+        } else {
+          var T = -Math.PI / 2;
+          this.rightUpperLeg.quaternion.slerp(
+            new THREE.Quaternion(Math.sin(T / 2), 0, 0, Math.cos(T / 2)),
+            0.1
+          );
+        }
+        if (this.movement == "kick done")
+          animateHelper(this.rightUpperArm.quaternion, "lower");
+        break;
+    }
+  }
 }
+
+const animateHelper = (currentQ, type) => {
+  var T = Math.PI;
+  var x = Math.sin(T / 2);
+  var y = 0;
+  var z = 0;
+  var w = Math.cos(T / 2);
+
+  var q2 =
+    type == "raise"
+      ? new THREE.Quaternion(x, y, z, w)
+      : new THREE.Quaternion(0, 0, 0, 1);
+
+  currentQ.slerp(q2, 0.01);
+  return;
+};

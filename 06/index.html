@@ -54,6 +54,8 @@
 
         renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        effect = new THREE.AnaglyphEffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
         ambientLight = new THREE.AmbientLight();
@@ -78,7 +80,7 @@
 
         // ROBOT GOES HERE!
 
-        var r1 = new Robot(0, -55, 0);
+        r1 = new Robot(0, -55, 0);
         r1.show(scene);
 
         // var r2 = new Robot(30, -55, 0);
@@ -86,7 +88,12 @@
 
         animate();
 
-        var controller = { anaglyph: false };
+        var controller = {
+          anaglyph: false,
+          raiseLeftArm: () => r1.raiseLeftArm(),
+          lowerLeftArm: () => r1.lowerLeftArm(),
+          kick: () => r1.kick(),
+        };
         var gui = new dat.GUI();
         var rendering = gui.addFolder("Rendering");
         rendering.add(controller, "anaglyph");
@@ -96,14 +103,16 @@
         moving.add(r1.head.position, "x", -1000, 1000);
         moving.add(r1.head.position, "y", -1000, 1000);
         moving.add(r1.head.position, "z", -1000, 1000);
+        moving.add(controller, "raiseLeftArm");
+        moving.add(controller, "lowerLeftArm");
+        moving.add(controller, "kick");
         moving.open();
       };
 
       function animate() {
         requestAnimationFrame(animate);
-
         // TODO
-
+        r1.onAnimate();
         controls.update();
         renderer.render(scene, camera);
       }
