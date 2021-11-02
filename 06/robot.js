@@ -60,10 +60,10 @@ class Robot {
     this.leftLowerLeg.position.y = -15;
     this.leftUpperLeg.add(this.leftLowerLeg);
 
-    this.leftHand = new THREE.Bone();
-    this.leftHand.position.x = 5;
-    this.leftHand.position.y = -5;
-    this.leftLowerLeg.add(this.leftHand);
+    this.leftLeg = new THREE.Bone();
+    this.leftLeg.position.x = 5;
+    this.leftLeg.position.y = -5;
+    this.leftLowerLeg.add(this.leftLeg);
 
     // Right Leg
     this.rightUpperLeg = new THREE.Bone();
@@ -76,13 +76,12 @@ class Robot {
     this.rightLowerLeg.position.y = -15;
     this.rightUpperLeg.add(this.rightLowerLeg);
 
-    this.rightHand = new THREE.Bone();
-    this.rightHand.position.x = -5;
-    this.rightHand.position.y = -5;
-    this.rightLowerLeg.add(this.rightHand);
+    this.rightLeg = new THREE.Bone();
+    this.rightLeg.position.x = -5;
+    this.rightLeg.position.y = -5;
+    this.rightLowerLeg.add(this.rightLeg);
   }
   show(scene) {
-    console.log(this.neck.position);
     var rGroup = new THREE.Group();
     rGroup.add(this.head);
 
@@ -91,4 +90,6 @@ class Robot {
     var helper = new THREE.SkeletonHelper(rGroup);
     scene.add(helper);
   }
+
+  onAnimate() {}
 }
