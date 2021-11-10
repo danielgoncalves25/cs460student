@@ -1,15 +1,32 @@
 class Robot2 {
   constructor(x, y, z) {
-    this.movement = "";
-    this.head = new THREE.Bone();
-    this.head.position.x = x;
-    this.head.position.y = y;
-    this.head.position.z = z;
+    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, "blue");
 
-    //neck position is relative to the head
-    this.neck = new THREE.Bone();
+    var geometry = fromHelper[0];
+    var material = fromHelper[1];
+    var bones = fromHelper[2];
+
+    var mesh = new THREE.SkinnedMesh(geometry, material);
+    var skeleton = new THREE.Skeleton(bones);
+    mesh.add(bones[0]);
+    mesh.bind(skeleton);
+
+    // mesh.add(bones[1]);
+    // mesh.add(bones[2]);
+    // mesh.add(bones[3]);
+    this.movement = "";
+    this.root = bones[0];
+    this.root.position.set(x, y, z);
+    this.head = bones[1];
+
+    this.neck = bones[2];
     this.neck.position.y = -10;
-    this.head.add(this.neck);
+
+    // Torso
+    this.torso = bones[3];
+    this.torso.position.y = -30;
+
+    this.bodyMesh = mesh;
 
     // Left Arm
     this.leftUpperArm = new THREE.Bone();
@@ -42,11 +59,6 @@ class Robot2 {
     this.rightHand.position.x = -5;
     this.rightHand.position.y = -5;
     this.rightLowerArm.add(this.rightHand);
-
-    // Torso
-    this.torso = new THREE.Bone();
-    this.torso.position.y = -30;
-    this.neck.add(this.torso);
 
     // Left Leg
     this.leftUpperLeg = new THREE.Bone();
@@ -81,13 +93,8 @@ class Robot2 {
     this.rightLowerLeg.add(this.rightLeg);
   }
   show(scene) {
-    var rGroup = new THREE.Group();
-    rGroup.add(this.head);
-
-    scene.add(rGroup);
-
-    var helper = new THREE.SkeletonHelper(rGroup);
-    scene.add(helper);
+    scene.add(this.bodyMesh);
+    scene.add(this.bodyMesh);
   }
   raiseLeftArm() {
     this.movement = "raiseLeftArm";
