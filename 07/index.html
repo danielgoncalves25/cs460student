@@ -39,7 +39,7 @@
 
     <script>
       var scene, camera, renderer, effect, ambientLight, light, controls;
-      var floor;
+      var floor, allRobots;
 
       window.onload = function () {
         scene = new THREE.Scene();
@@ -79,8 +79,22 @@
         r = new Robot2(0, -25, 0);
         r.show(scene);
 
+        allRobots = [r];
+
         controller = {
           anaglyph: false,
+          raiseLeftArm: () => {
+            allRobots.forEach((r) => r.raiseLeftArm());
+          },
+          lowerLeftArm: () => {
+            allRobots.forEach((r) => r.lowerLeftArm());
+          },
+          kick: () => {
+            allRobots.forEach((r) => r.kick());
+          },
+          dance: () => {
+            allRobots.forEach((r) => r.dance());
+          },
         };
 
         var gui = new dat.GUI();
@@ -91,10 +105,10 @@
         moving.add(r.head.position, "x", -1000, 1000).listen();
         moving.add(r.head.position, "y", -1000, 1000).listen();
         moving.add(r.head.position, "z", -1000, 1000).listen();
-        moving.add(r, "raiseLeftArm");
-        moving.add(r, "lowerLeftArm");
-        moving.add(r, "kick");
-        moving.add(r, "dance");
+        moving.add(controller, "raiseLeftArm");
+        moving.add(controller, "lowerLeftArm");
+        moving.add(controller, "kick");
+        moving.add(controller, "dance");
         moving.open();
 
         controls = new THREE.TrackballControls(camera, renderer.domElement);
@@ -122,18 +136,20 @@
         intersects = raycaster.intersectObject(floor);
 
         if (intersects.length > 0) {
-          r.head.position.set(
+          r1 = new Robot2(
             intersects[0].point.x,
-            intersects[0].point.y + 60,
+            intersects[0].point.y < 15 ? 0 : intersects[0].point.y,
             intersects[0].point.z
           );
+          r1.show(scene);
+          allRobots.push(r1);
         }
       };
 
       function animate() {
         requestAnimationFrame(animate);
 
-        r.onAnimate();
+        allRobots.forEach((r) => r.onAnimate());
 
         controls.update();
 
