@@ -144,17 +144,17 @@ class Robot2 {
   dance() {
     this.movement = "dance";
   }
-
+  walk() {
+    this.movement = "walk";
+  }
+  walk2() {
+    this.movement = "walk2";
+  }
   onAnimate() {
     if (this.movement == "raise left arm") {
       var T = Math.PI;
       this.leftUpperArm.quaternion.slerp(
-        new THREE.Quaternion(
-          Math.sin(-T / 2), // w
-          0, // x
-          0, // y
-          Math.cos(-T / 2)
-        ), // z
+        new THREE.Quaternion(Math.sin(-T / 2), 0, 0, Math.cos(-T / 2)),
         0.1
       );
     } else if (this.movement == "lower left arm") {
@@ -232,6 +232,17 @@ class Robot2 {
           500
         );
       }
+    } else if (this.movement == "walk") {
+      const q = new THREE.Quaternion(
+        Math.sin(Math.PI / 2 / 2),
+        0,
+        0,
+        Math.cos(Math.PI / 2 / 2)
+      );
+      this.leftUpperLeg.quaternion.slerp(q, 0.1);
+    } else if (this.movement == "walk2") {
+      const q = new THREE.Quaternion(0, 0, 0, 1);
+      this.leftUpperLeg.quaternion.slerp(q, 0.1);
     }
   }
 }

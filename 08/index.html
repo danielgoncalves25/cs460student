@@ -83,18 +83,12 @@
 
         controller = {
           anaglyph: false,
-          raiseLeftArm: () => {
-            allRobots.forEach((r) => r.raiseLeftArm());
-          },
-          lowerLeftArm: () => {
-            allRobots.forEach((r) => r.lowerLeftArm());
-          },
-          kick: () => {
-            allRobots.forEach((r) => r.kick());
-          },
-          dance: () => {
-            allRobots.forEach((r) => r.dance());
-          },
+          raiseLeftArm: () => allRobots.forEach((r) => r.raiseLeftArm()),
+          lowerLeftArm: () => allRobots.forEach((r) => r.lowerLeftArm()),
+          kick: () => allRobots.forEach((r) => r.kick()),
+          dance: () => allRobots.forEach((r) => r.dance()),
+          walk: () => allRobots.forEach((r) => r.walk()),
+          walk2: () => allRobots.forEach((r) => r.walk2()),
         };
 
         var gui = new dat.GUI();
@@ -109,6 +103,8 @@
         moving.add(controller, "lowerLeftArm");
         moving.add(controller, "kick");
         moving.add(controller, "dance");
+        moving.add(controller, "walk");
+        moving.add(controller, "walk2");
         moving.open();
 
         controls = new THREE.TrackballControls(camera, renderer.domElement);
@@ -134,11 +130,11 @@
         raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(vp_coords_near, camera);
         intersects = raycaster.intersectObject(floor);
-
+        console.log(intersects[0].point.y);
         if (intersects.length > 0) {
           r1 = new Robot2(
             intersects[0].point.x,
-            intersects[0].point.y < 15 ? 0 : intersects[0].point.y,
+            intersects[0].point.y < -25 ? -25 : intersects[0].point.y,
             intersects[0].point.z
           );
           r1.show(scene);
