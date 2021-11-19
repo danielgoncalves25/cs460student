@@ -150,6 +150,13 @@ Robot.prototype.walk = function () {
 Robot.prototype.walk2 = function () {
   this.movement = "walk2";
 };
+Robot.prototype.onStep = function () {
+  // var axis = Math.floor(Math.random() * 2);
+  // var dir;
+  // if (axis == 0) dir = this.root.translateX(5);
+  // else dir = this.root.translateZ(5);
+  this.root.translateZ(5);
+};
 
 Robot.prototype.onAnimate = function () {
   if (this.movement == "raise left arm") {
@@ -236,15 +243,50 @@ Robot.prototype.onAnimate = function () {
       );
     }
   } else if (this.movement == "walk") {
-    const q = new THREE.Quaternion(
-      Math.sin(Math.PI / 2 / 2),
+    if (this.left_upperleg.quaternion.w < 0.93) this.walk2();
+    if (this.root.position.z < -490 || this.root.position.z > 490) {
+      var dir = this.root.position.z < 0 ? -1 : 1;
+      console.log("Z", dir);
+      this.root.rotateY(
+        THREE.Math.degToRad(Math.floor(Math.random() * 180 * dir))
+      );
+    } else if (this.root.position.x < -490 || this.root.position.x > 490) {
+      var dir = this.root.position.x < 0 ? -1 : 1;
+      console.log("X", dir);
+      var interval = Math.floor(Math.random() * (270 - 90 + 1) + 90);
+      this.root.rotateY(THREE.Math.degToRad(interval * dir));
+    }
+    this.right_upperleg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
+    var q = new THREE.Quaternion(
+      Math.sin(Math.PI / 4 / 2),
       0,
       0,
-      Math.cos(Math.PI / 2 / 2)
+      Math.cos(Math.PI / 4 / 2)
     );
     this.left_upperleg.quaternion.slerp(q, 0.1);
+    this.onStep();
   } else if (this.movement == "walk2") {
-    const q = new THREE.Quaternion(0, 0, 0, 1);
-    this.left_upperleg.quaternion.slerp(q, 0.1);
+    if (this.right_upperleg.quaternion.w < 0.93) this.walk();
+    if (this.root.position.z < -490 || this.root.position.z > 490) {
+      var dir = this.root.position.z < 0 ? -1 : 1;
+      console.log("Z", dir);
+      this.root.rotateY(
+        THREE.Math.degToRad(Math.floor(Math.random() * 180 * dir))
+      );
+    } else if (this.root.position.x < -490 || this.root.position.x > 490) {
+      var dir = this.root.position.x < 0 ? -1 : 1;
+      console.log("X", dir);
+      var interval = Math.floor(Math.random() * (270 - 90 + 1) + 90);
+      this.root.rotateY(THREE.Math.degToRad(interval * dir));
+    }
+    this.left_upperleg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
+    var q = new THREE.Quaternion(
+      Math.sin(Math.PI / 4 / 2),
+      0,
+      0,
+      Math.cos(Math.PI / 4 / 2)
+    );
+    this.right_upperleg.quaternion.slerp(q, 0.1);
+    this.onStep();
   }
 };

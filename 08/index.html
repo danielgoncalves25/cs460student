@@ -86,22 +86,11 @@
 
         controller = {
           anaglyph: false,
-          // start the music
-          // var music = document.getElementById("music");
-          // music.autoplay = true;
-          // music.load();
-
-          // var video = document.getElementById("video");
-          // var texture = new THREE.VideoTexture(video);
-          // floor.material.map = texture;
-          // video.play();
-
           raiseLeftArm: () => allRobots.forEach((r) => r.raise_left_arm()),
           lowerLeftArm: () => allRobots.forEach((r) => r.lower_left_arm()),
           kick: () => allRobots.forEach((r) => r.kick()),
           dance: () => allRobots.forEach((r) => r.dance()),
           walk: () => allRobots.forEach((r) => r.walk()),
-          walk2: () => allRobots.forEach((r) => r.walk2()),
         };
 
         var gui = new dat.GUI();
@@ -117,7 +106,6 @@
         moving.add(controller, "kick");
         moving.add(controller, "dance");
         moving.add(controller, "walk");
-        moving.add(controller, "walk2");
         moving.open();
 
         controls = new THREE.TrackballControls(camera, renderer.domElement);
