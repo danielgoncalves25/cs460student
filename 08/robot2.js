@@ -1,6 +1,10 @@
+// import uuidv4 from "uuid/v4";
+
 class Robot {
   constructor(x, y, z) {
     // create head, neck, and, torso
+
+    this.uuid = Date.now();
     var fromhelper = HELPER.cylinderSkeletonMesh(3, 5, "blue");
     var geometry = fromhelper[0];
     var material = fromhelper[1];
@@ -120,7 +124,6 @@ class Robot {
     this.movement = null;
   }
 }
-
 Robot.prototype.show = function (scene) {
   scene.add(this.body_mesh);
   scene.add(this.leftarm_mesh);
@@ -151,10 +154,12 @@ Robot.prototype.walk2 = function () {
   this.movement = "walk2";
 };
 Robot.prototype.onStep = function () {
-  // var axis = Math.floor(Math.random() * 2);
-  // var dir;
-  // if (axis == 0) dir = this.root.translateX(5);
-  // else dir = this.root.translateZ(5);
+  allRobots.forEach((r) => {
+    // TODO check the distance between robots and determine if its too close
+    // if too close rotate 180
+    if (r.uuid !== this.uuid) {
+    }
+  });
   this.root.translateZ(5);
 };
 
@@ -246,13 +251,11 @@ Robot.prototype.onAnimate = function () {
     if (this.left_upperleg.quaternion.w < 0.93) this.walk2();
     if (this.root.position.z < -490 || this.root.position.z > 490) {
       var dir = this.root.position.z < 0 ? -1 : 1;
-      console.log("Z", dir);
       this.root.rotateY(
         THREE.Math.degToRad(Math.floor(Math.random() * 180 * dir))
       );
     } else if (this.root.position.x < -490 || this.root.position.x > 490) {
       var dir = this.root.position.x < 0 ? -1 : 1;
-      console.log("X", dir);
       var interval = Math.floor(Math.random() * (270 - 90 + 1) + 90);
       this.root.rotateY(THREE.Math.degToRad(interval * dir));
     }
@@ -269,13 +272,11 @@ Robot.prototype.onAnimate = function () {
     if (this.right_upperleg.quaternion.w < 0.93) this.walk();
     if (this.root.position.z < -490 || this.root.position.z > 490) {
       var dir = this.root.position.z < 0 ? -1 : 1;
-      console.log("Z", dir);
       this.root.rotateY(
         THREE.Math.degToRad(Math.floor(Math.random() * 180 * dir))
       );
     } else if (this.root.position.x < -490 || this.root.position.x > 490) {
       var dir = this.root.position.x < 0 ? -1 : 1;
-      console.log("X", dir);
       var interval = Math.floor(Math.random() * (270 - 90 + 1) + 90);
       this.root.rotateY(THREE.Math.degToRad(interval * dir));
     }
