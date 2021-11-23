@@ -3,7 +3,7 @@
 class Robot {
   constructor(x, y, z) {
     // create head, neck, and, torso
-
+    console.log("Creating Robot");
     this.uuid = Date.now();
     var fromhelper = HELPER.cylinderSkeletonMesh(3, 5, "blue");
     var geometry = fromhelper[0];
@@ -158,6 +158,11 @@ Robot.prototype.onStep = function () {
     // TODO check the distance between robots and determine if its too close
     // if too close rotate 180
     if (r.uuid !== this.uuid) {
+      if (this.root.position.distanceTo(r.root.position) < 30) {
+        this.root.rotateY(THREE.Math.degToRad(180));
+        
+            }
+
     }
   });
   this.root.translateZ(5);
