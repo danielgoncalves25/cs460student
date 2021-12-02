@@ -40,12 +40,12 @@
         scene.add( directionalLight );
 
         // Pointing to Troll
-        const light = new THREE.PointLight( 0xc80000, 1, 100 );
+        const trollPointLight = new THREE.PointLight( 0xc80000, 1, 100 );
         light.position.set( 100,100,55 );
         scene.add( light );
 
         // Pointing to Armadillo
-        const light2 = new THREE.PointLight( 0xc80000, -1, 100 );
+        const armadilloPointLight = new THREE.PointLight( 0xc80000, -1, 100 );
         light2.position.set( 0,0,0 );
         scene.add( light2 );
         
@@ -71,6 +71,20 @@
         directionalFolder.add(directionalLight.position, 'y', -200, 200);
         directionalFolder.add(directionalLight.position, 'z', -200, 200);
         directionalFolder.open();
+
+        var trollPointLightFolder = gui.addFolder('Troll Point Light');
+        trollPointLightFolder.addColor(controller, 'color').onChange( function(value) { trollPointLightLight.color.setHex(value); });
+        trollPointLightFolder.add(trollPointLight.position, 'x', -200, 200);
+        trollPointLightFolder.add(trollPointLight.position, 'y', -200, 200);
+        trollPointLightFolder.add(trollPointLight.position, 'z', -200, 200);
+        trollPointLightFolder.open();
+
+        var armadilloPointLightFolder = gui.addFolder('Armadillo Point Light');
+        armadilloPointLightFolder.addColor(controller, 'color').onChange( function(value) { armadilloPointLight.color.setHex(value); });
+        armadilloPointLightFolder.add(armadilloPointLight.position, 'x', -200, 200);
+        armadilloPointLightFolder.add(armadilloPointLight.position, 'y', -200, 200);
+        armadilloPointLightFolder.add(armadilloPointLight.position, 'z', -200, 200);
+        armadilloPointLightFolder.open();
 
 
         var loader = new PLYLoader();
