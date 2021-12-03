@@ -2,140 +2,249 @@
   <head>
     <meta charset="UTF-8" />
     <style>
-      html, body { 
-        background-color:#000;
+      html,
+      body {
+        background-color: #000;
         margin: 0;
         padding: 0;
         height: 100%;
-        overflow: hidden !important;  
+        overflow: hidden !important;
       }
     </style>
 
-    <script type='module'>
+    <script type="module">
+      import * as THREE from "https://threejs.org/build/three.module.js";
+      import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
+      import { TrackballControls } from "https://threejs.org/examples/jsm/controls/TrackballControls.js";
+      import { PLYLoader } from "https://threejs.org/examples/jsm/loaders/PLYLoader.js";
 
-      import * as THREE from 'https://threejs.org/build/three.module.js';
-      import { GUI } from 'https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js';
-      import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
-      import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
+      let scene,
+        camera,
+        renderer,
+        effect,
+        ambientLight,
+        directionalLight,
+        light,
+        mesh,
+        troll,
+        armadillo,
+        trollMesh,
+        toonMaterial,
+        lambertMaterial,
+        standardMatrial,
+        controls,
+        gui,
+        controller;
 
-      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, trollMesh,  toonMaterial, lambertMaterial, controls, controller;
-
-      window.onload = function() {
-
-
+      window.onload = function () {
         scene = new THREE.Scene();
 
-        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set( 0, 0, -1000);
+        camera = new THREE.PerspectiveCamera(
+          60,
+          window.innerWidth / window.innerHeight,
+          1,
+          10000
+        );
+        camera.position.set(0, 0, -1000);
 
-        renderer = new THREE.WebGLRenderer({ });
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement );
-        
+        renderer = new THREE.WebGLRenderer({});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
         ambientLight = new THREE.AmbientLight();
-        scene.add( ambientLight );
-        
-        directionalLight = new THREE.DirectionalLight( 0xffffff, 5.0 );
-        directionalLight.position.set( 10, 100, -100 );
-        scene.add( directionalLight );
+        scene.add(ambientLight);
 
-        // Pointing to Troll
-        const trollPointLight = new THREE.PointLight( 0xc80000, 1, 100 );
-        light.position.set( 100,100,55 );
-        scene.add( light );
+        directionalLight = new THREE.DirectionalLight(0xffffff, 5.0);
+        directionalLight.position.set(10, 100, -100);
+        scene.add(directionalLight);
 
         // Pointing to Armadillo
-        const armadilloPointLight = new THREE.PointLight( 0xc80000, -1, 100 );
-        light2.position.set( 0,0,0 );
-        scene.add( light2 );
-        
-        
+        const armadilloPointLight = new THREE.PointLight(0xc80000, 3, 100);
+        armadilloPointLight.position.set(0, 0, 0);
+        scene.add(armadilloPointLight);
+        const sphereSize = 5;
+        var pointLightHelper = new THREE.PointLightHelper(
+          armadilloPointLight,
+          sphereSize
+        );
+        scene.add(pointLightHelper);
+
+        // Pointing to Troll
+        const trollPointLight = new THREE.PointLight(0xc80000, 5, 100);
+        trollPointLight.position.set(100, 45, -15);
+        scene.add(trollPointLight);
+
+        var pointLightHelper = new THREE.PointLightHelper(
+          trollPointLight,
+          sphereSize
+        );
+        scene.add(pointLightHelper);
+
+        standardMatrial = new THREE.MeshStandardMaterial({ color: 0x488c2c });
+
         // TODO Part 3 (add 2 pointlights)
         controller = {
-          'color': 0xffffff // we can use this single color
-                            // container for all colors in the scene 
-                            // if we modify the onChange callback (see below)
+          color: 0xffffff, // we can use this single color
+          // container for all colors in the scene
+          // if we modify the onChange callback (see below)
 
           // TODO Bonus Part 1
           // TODO Bonus Part 2
+          material: (val) => {
+            console.log("val");
+          },
         };
 
-        var gui = new GUI();
-        var ambientFolder = gui.addFolder('Ambient Light');
-        ambientFolder.addColor(controller, 'color').onChange( function(value) { ambientLight.color.setHex(value); });
+        gui = new GUI();
+        var ambientFolder = gui.addFolder("Ambient Light");
+        ambientFolder.addColor(controller, "color").onChange(function (value) {
+          ambientLight.color.setHex(value);
+        });
         ambientFolder.open();
 
-        var directionalFolder = gui.addFolder('Directional Light');
-        directionalFolder.addColor(controller, 'color').onChange( function(value) { directionalLight.color.setHex(value); });
-        directionalFolder.add(directionalLight.position, 'x', -200, 200);
-        directionalFolder.add(directionalLight.position, 'y', -200, 200);
-        directionalFolder.add(directionalLight.position, 'z', -200, 200);
+        var directionalFolder = gui.addFolder("Directional Light");
+        directionalFolder
+          .addColor(controller, "color")
+          .onChange(function (value) {
+            directionalLight.color.setHex(value);
+          });
+        directionalFolder.add(directionalLight.position, "x", -200, 200);
+        directionalFolder.add(directionalLight.position, "y", -200, 200);
+        directionalFolder.add(directionalLight.position, "z", -200, 200);
         directionalFolder.open();
 
-        var trollPointLightFolder = gui.addFolder('Troll Point Light');
-        trollPointLightFolder.addColor(controller, 'color').onChange( function(value) { trollPointLightLight.color.setHex(value); });
-        trollPointLightFolder.add(trollPointLight.position, 'x', -200, 200);
-        trollPointLightFolder.add(trollPointLight.position, 'y', -200, 200);
-        trollPointLightFolder.add(trollPointLight.position, 'z', -200, 200);
+        var trollPointLightFolder = gui.addFolder("Troll Point Light");
+        trollPointLightFolder
+          .addColor(controller, "color")
+          .onChange(function (value) {
+            trollPointLight.color.setHex(value);
+          });
+        trollPointLightFolder.add(trollPointLight.position, "x", -200, 200);
+        trollPointLightFolder.add(trollPointLight.position, "y", -200, 200);
+        trollPointLightFolder.add(trollPointLight.position, "z", -200, 200);
         trollPointLightFolder.open();
 
-        var armadilloPointLightFolder = gui.addFolder('Armadillo Point Light');
-        armadilloPointLightFolder.addColor(controller, 'color').onChange( function(value) { armadilloPointLight.color.setHex(value); });
-        armadilloPointLightFolder.add(armadilloPointLight.position, 'x', -200, 200);
-        armadilloPointLightFolder.add(armadilloPointLight.position, 'y', -200, 200);
-        armadilloPointLightFolder.add(armadilloPointLight.position, 'z', -200, 200);
+        var armadilloPointLightFolder = gui.addFolder("Armadillo Point Light");
+        armadilloPointLightFolder
+          .addColor(controller, "color")
+          .onChange(function (value) {
+            armadilloPointLight.color.setHex(value);
+          });
+        armadilloPointLightFolder.add(
+          armadilloPointLight.position,
+          "x",
+          -200,
+          200
+        );
+        armadilloPointLightFolder.add(
+          armadilloPointLight.position,
+          "y",
+          -200,
+          200
+        );
+        armadilloPointLightFolder.add(
+          armadilloPointLight.position,
+          "z",
+          -200,
+          200
+        );
         armadilloPointLightFolder.open();
 
-
         var loader = new PLYLoader();
-        loader.load('armadillo.ply', function (geometry) {
-
+        loader.load("armadillo.ply", function (geometry) {
           geometry.computeVertexNormals();
-          
-          toonMaterial = new THREE.MeshToonMaterial( {
-            color: 0x21ce70
-          } );
-          
-          mesh = new THREE.Mesh( geometry, toonMaterial );
-          console.log(mesh.position);
-          
-          
-          scene.add( mesh );
-          
-        } );
+
+          toonMaterial = new THREE.MeshToonMaterial({
+            color: 0xed1212,
+          });
+
+          mesh = new THREE.Mesh(geometry, toonMaterial);
+          scene.add(mesh);
+
+          var armadilloMatrialColorFolder = gui.addFolder(
+            "Armadillo Material Color"
+          );
+          armadilloMatrialColorFolder
+            .addColor(controller, "color")
+            .onChange(function (value) {
+              mesh.material.color.setHex(value);
+            });
+          armadilloMatrialColorFolder.open();
+        });
 
         // TODO Part 1, load another mesh
         var loader2 = new PLYLoader();
-        loader2.load('troll.ply', (geometry) =>{
+        loader2.load("troll.ply", (geometry) => {
           geometry.computeVertexNormals();
-          geometry.scale(.1,.1,.1)
-          geometry.lookAt(new THREE.Vector3( 0, 0, 500 ));
-          // console.log(geometry);
-          // geometry.translate(-80,0,0);
-          // geometry.position.set(-70,0,0);
+          geometry.scale(0.1, 0.1, 0.1);
+          geometry.lookAt(new THREE.Vector3(0, 0, 500));
 
-          lambertMaterial = new THREE.MeshLambertMaterial( {
-             color: 0x21ce70
-          } );
+          lambertMaterial = new THREE.MeshLambertMaterial({
+            color: 0x2630d9,
+          });
 
-          trollMesh = new THREE.Mesh( geometry, lambertMaterial );
-          
-          scene.add( trollMesh );
+          trollMesh = new THREE.Mesh(geometry, lambertMaterial);
+
+          scene.add(trollMesh);
           scene.updateMatrixWorld(true);
           var position = new THREE.Vector3();
-          position.getPositionFromMatrix( trollMesh.matrixWorld );
-          trollMesh.position.set(100,100,55);
+          position.getPositionFromMatrix(trollMesh.matrixWorld);
+          trollMesh.position.set(100, 100, 25);
           trollMesh.rotation.x = -1.5;
 
-          var trollMovementFolder = gui.addFolder('Troll Movement');
-          trollMovementFolder.add(trollMesh.position, 'x', -1000, 1000);
-          trollMovementFolder.add(trollMesh.position, 'y', -1000, 1000);
-          trollMovementFolder.add(trollMesh.position, 'z', -1000, 1000)
+          var trollMovementFolder = gui.addFolder("Troll Movement");
+          trollMovementFolder.add(trollMesh.position, "x", -1000, 1000);
+          trollMovementFolder.add(trollMesh.position, "y", -1000, 1000);
+          trollMovementFolder.add(trollMesh.position, "z", -1000, 1000);
           trollMovementFolder.open();
 
+          var trollMatrialColorFolder = gui.addFolder("Troll Material Color");
+          trollMatrialColorFolder
+            .addColor(controller, "color")
+            .onChange(function (value) {
+              trollMesh.material.color.setHex(value);
+              console.log(lambertMaterial.color);
+            });
+          trollMatrialColorFolder.open();
+
+          gui
+            .add(controller, "material", ["toon", "standard", "lambert"])
+            .onChange(function (value) {
+              console.log(trollMesh, mesh);
+              if (value == "toon") {
+                var atoonMaterial = new THREE.MeshToonMaterial({
+                  color: mesh.material.color,
+                });
+                var ttoonMaterial = new THREE.MeshToonMaterial({
+                  color: trollMesh.material.color,
+                });
+                mesh.material = atoonMaterial;
+                trollMesh.material = ttoonMaterial;
+              } else if (value == "lambert") {
+                var alambertMaterial = new THREE.MeshLambertMaterial({
+                  color: mesh.material.color,
+                });
+                var tlambertMaterial = new THREE.MeshLambertMaterial({
+                  color: trollMesh.material.color,
+                });
+                mesh.material = alambertMaterial;
+                trollMesh.material = tlambertMaterial;
+              } else {
+                standardMatrial = new THREE.MeshStandardMaterial({
+                  color: 0x488c2c,
+                });
+                var astandardMatrial = new THREE.MeshStandardMaterial({
+                  color: mesh.material.color,
+                });
+                var tstandardMatrial = new THREE.MeshStandardMaterial({
+                  color: trollMesh.material.color,
+                });
+                mesh.material = astandardMatrial;
+                trollMesh.material = tstandardMatrial;
+              }
+            });
         });
         // TODO Part 2, use a different material for this mesh
-
 
         // TODO Part 4 (control the color and position of point lights)
 
@@ -143,33 +252,17 @@
 
         gui.open();
 
-
-
-
-        controls = new TrackballControls( camera, renderer.domElement );
+        controls = new TrackballControls(camera, renderer.domElement);
 
         animate();
-
       };
-
 
       function animate() {
-
-        requestAnimationFrame( animate );
-        if (trollMesh != null){
-          trollMesh.rotation.x = -1.5;
-          // console.log( trollMesh.rotation);
-        }
-
+        requestAnimationFrame(animate);
         controls.update();
-
-        renderer.render( scene, camera );
-        
-
-      };
-
+        renderer.render(scene, camera);
+      }
     </script>
   </head>
-  <body>
-  </body>
+  <body></body>
 </html>
