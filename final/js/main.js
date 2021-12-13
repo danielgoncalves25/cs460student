@@ -1,5 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js";
-import * as THREEx from "../resources/bower_components/threex.domevents/threex.domevents.js";
+// import * as THREEx from "../resources/bower_components/threex.domevents/threex.domevents.js";
 
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js";
@@ -36,7 +36,7 @@ class Game {
     this.camera.position.set(-20, 37, 193);
 
     this.scene = new THREE.Scene();
-    var domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement);
+    // var domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement);
 
     for (var i = -50; i < 1500; i += 300) {
       let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
