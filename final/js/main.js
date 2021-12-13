@@ -96,40 +96,48 @@ class Game {
   }
   async getWorldModel() {
     const loader = new GLTFLoader();
-    loader.setPath("./resources/world/");
+    loader.setPath("./resources/world2/");
     var [gltf] = await Promise.all([loader.loadAsync("scene.gltf")]);
     return gltf.scene;
   }
 
   loadModelIntoScene() {
     // Configure and load mario
-    this.mario.scale.set(0.3, 0.3, 0.3);
-    this.mario.position.set(-65, 9, 0);
+    this.mario.scale.set(0.2, 0.2, 0.2);
+    this.mario.position.set(-100, 10, 16);
+    var marioFolder = this.gui.addFolder("Mario");
+    marioFolder.add(this.mario.position, "x", -250, 1500);
+    marioFolder.add(this.mario.position, "y", -200, 200);
+    marioFolder.add(this.mario.position, "z", -200, 200);
+    marioFolder.open();
     this.mario.rotation.y = 1.5;
+
     this.scene.add(this.mario);
 
     // Loads world
-    var unknown =
-      this.world.children[0].children[0].children[0].children[0].children[0]
-        .children;
-    var poles = unknown[0];
-    var toads = unknown[6];
-    var star = unknown[10];
-    var climbTiles = unknown[22];
-    var coins = unknown[48];
-    var tiles = unknown[52];
-    unknown[34].material.color.setHex(0x301934);
-    this.hello = "0";
+    // var unknown =
+    //   this.world.children[0].children[0].children[0].children[0].children[0]
+    //     .children;
+    // var poles = unknown[0];
+    // var toads = unknown[6];
+    // var star = unknown[10];
+    // var climbTiles = unknown[22];
+    // var coins = unknown[48];
+    // var tiles = unknown[52];
+    // unknown[34].material.color.setHex(0x301934);
+    // this.hello = "0";
 
-    for (var i = 0; i < unknown.length; i++) {
-      // unknown[i].material.color.setHex(0x301934);
-      unknown[i].callback = function () {
-        console.log(i);
-      };
-    }
-    console.log(unknown);
-    this.world.position.set(0, 0, 0);
-    this.world.scale.set(0.01, 0.01, 0.01);
+    // for (var i = 0; i < unknown.length; i++) {
+    //   // unknown[i].material.color.setHex(0x301934);
+    //   unknown[i].callback = function () {
+    //     console.log(i);
+    //   };
+    // }
+    // console.log(unknown);
+    console.log(this.world);
+    this.world.position.set(200, 0, 0);
+    // this.world.scale.set(0.01, 0.01, 0.01);
+    this.world.scale.set(5, 5, 5);
     this.scene.add(this.world);
   }
 
