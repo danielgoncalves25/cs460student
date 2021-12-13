@@ -27,7 +27,6 @@ class Game {
       },
       false
     );
-    console.log(THREE);
     const fov = 60;
     const aspect = 1920 / 1080;
     const near = 1.0;
@@ -103,8 +102,10 @@ class Game {
   }
 
   loadModelIntoScene() {
-    // Loads mario
+    // Configure and load mario
     this.mario.scale.set(0.3, 0.3, 0.3);
+    this.mario.position.set(-65, 9, 0);
+    this.mario.rotation.y = 1.5;
     this.scene.add(this.mario);
 
     // Loads world
@@ -129,10 +130,6 @@ class Game {
     console.log(unknown);
     this.world.position.set(0, 0, 0);
     this.world.scale.set(0.01, 0.01, 0.01);
-    var worldProp = {
-      poles: poles,
-      unknown: unknown,
-    };
     this.scene.add(this.world);
   }
 
