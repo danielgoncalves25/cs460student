@@ -1,0 +1,23 @@
+{
+  "name": "final",
+  "version": "1.0.0",
+  "description": "CS460 Final Project",
+  "main": "./js/main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "cannon-es": "^0.18.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danelgoncalves25/cs460student.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danelgoncalves25/cs460student/issues"
+  },
+  "homepage": "https://github.com/danelgoncalves25/cs460student#readme"
+}

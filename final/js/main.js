@@ -4,6 +4,7 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js";
 import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
+import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
 
 class Game {
   constructor() {
@@ -19,6 +20,8 @@ class Game {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
+    console.log("Hello");
+    console.log(CANNON);
     document.body.appendChild(this.renderer.domElement);
     window.addEventListener(
       "resize",
@@ -64,26 +67,21 @@ class Game {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
 
-    function onDocumentMouseDown(event) {
-      console.log(this.mouse);
-      //   console.log(this.objects);
-      //   event.preventDefault();
-      //   this.mouse.x =
-      //     (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1;
-      //   this.mouse.y =
-      //     -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
-      //   this.raycaster.setFromCamera(this.mouse, this.camera);
-      //   var intersects = this.raycaster.intersectObjects(objects);
-      //   if (intersects.length > 0) {
-      //     intersects[0].object.callback();
-      //   }
-    }
+    // Setup Cannon.js things
+    this.physicWorld = new CANNON.World();
+    const dt = 1.0 / 60.0;
+    const damping = 0.01;
+    this.physicWorld.broadphase = new CANNON.NaiveBroadphase();
+    this.physicWorld.gravity.set(0, -10, 0);
+    // this.helper = new CannonHelper(this.scene, this.physicWorld);
+    var groundShape = new CANNON.Plane();
+    var groundMaterial = new CANNON.Material();
+
     this.obj = {};
     this.mario = await this.getMarioModel();
     this.world = await this.getWorldModel();
 
     this.loadModelIntoScene();
-    // this.objects.world.unknown[3].callback();
 
     this.RAF();
   }
@@ -104,40 +102,23 @@ class Game {
   loadModelIntoScene() {
     // Configure and load mario
     this.mario.scale.set(0.2, 0.2, 0.2);
-    this.mario.position.set(-100, 10, 16);
+    this.mario.position.set(-100, 10, 20);
     var marioFolder = this.gui.addFolder("Mario");
     marioFolder.add(this.mario.position, "x", -250, 1500);
     marioFolder.add(this.mario.position, "y", -200, 200);
     marioFolder.add(this.mario.position, "z", -200, 200);
     marioFolder.open();
     this.mario.rotation.y = 1.5;
-
     this.scene.add(this.mario);
 
     // Loads world
-    // var unknown =
-    //   this.world.children[0].children[0].children[0].children[0].children[0]
-    //     .children;
-    // var poles = unknown[0];
-    // var toads = unknown[6];
-    // var star = unknown[10];
-    // var climbTiles = unknown[22];
-    // var coins = unknown[48];
-    // var tiles = unknown[52];
-    // unknown[34].material.color.setHex(0x301934);
-    // this.hello = "0";
-
-    // for (var i = 0; i < unknown.length; i++) {
-    //   // unknown[i].material.color.setHex(0x301934);
-    //   unknown[i].callback = function () {
-    //     console.log(i);
-    //   };
-    // }
-    // console.log(unknown);
-    console.log(this.world);
     this.world.position.set(200, 0, 0);
-    // this.world.scale.set(0.01, 0.01, 0.01);
     this.world.scale.set(5, 5, 5);
+    var environment = [];
+    this.world.traverse((node) => {
+      if (node.isMesh) environment.push(node);
+    });
+    this.obj.worldEnv = environment;
     this.scene.add(this.world);
   }
 
