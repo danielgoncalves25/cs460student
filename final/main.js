@@ -101,20 +101,20 @@ class Game {
     loader.setPath("./resources/mario/");
     const anim = new FBXLoader();
     anim.setPath("./resources/mario/animations/");
-    var [idle, run, jump] = await Promise.all([
-      loader.loadAsync("idle.fbx"),
-      anim.loadAsync("run.fbx"),
-      anim.loadAsync("jump.fbx"),
-    ]);
-    console.log(jump);
-    this.animations.push(
-      idle.animations[0],
-      run.animations[0],
-      jump.animations[0]
-    );
-    this.currentMixer = new THREE.AnimationMixer(idle);
-    this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
-    this.animationAction.play();
+    // var [idle, run, jump] = await Promise.all([
+    //   loader.loadAsync("idle.fbx"),
+    //   anim.loadAsync("run.fbx"),
+    //   anim.loadAsync("jump.fbx"),
+    // ]);
+    var [idle] = await Promise.all([loader.loadAsync("idle.fbx")]);
+    // this.animations.push(
+    //   idle.animations[0],
+    //   run.animations[0],
+    //   jump.animations[0]
+    // );
+    // this.currentMixer = new THREE.AnimationMixer(idle);
+    // this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
+    // this.animationAction.play();
 
     return idle;
   }
@@ -163,7 +163,7 @@ class Game {
       this.RAF();
       // this.camera.position.x += 0.3;
       // console.log(this.camera.position);
-      this.currentMixer.update(0.01);
+      // this.currentMixer.update(0.01);
       this.renderer.render(this.scene, this.camera);
     });
   }
