@@ -5,11 +5,9 @@ import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/j
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js";
 import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
-import { TransformControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/TransformControls.js";
+// import { TransformControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/TransformControls.js";
 
-import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
-// import * as ttc from "https://unpkg.com/three-to-cannon@4.0.2/dist/three-to-cannon.modern.js";
-// import { threeToCannon, ShapeType } from "three-to-cannon";
+// import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
 
 class Game {
   constructor() {
@@ -68,28 +66,33 @@ class Game {
     cameraFolder.add(this.camera.position, "y", -200, 200);
     cameraFolder.add(this.camera.position, "z", -200, 200);
     cameraFolder.open();
-    this.Tcontrols = new TransformControls(
-      this.camera,
-      this.renderer.domElement
-    );
-    this.scene.add(this.Tcontrols);
+    // this.Tcontrols = new TransformControls(
+    //   this.camera,
+    //   this.renderer.domElement
+    // );
+    // this.scene.add(this.Tcontrols);
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
 
     // Setup Cannon.js things
-    this.physicWorld = new CANNON.World();
-    const dt = 1.0 / 60.0;
-    const damping = 0.01;
-    this.physicWorld.broadphase = new CANNON.NaiveBroadphase();
-    this.physicWorld.gravity.set(0, -10, 0);
-    // this.helper = new CannonHelper(this.scene, this.physicWorld);
-    var groundShape = new CANNON.Plane();
-    var groundMaterial = new CANNON.Material();
+    // this.physicWorld = new CANNON.World();
+    // const dt = 1.0 / 60.0;
+    // const damping = 0.01;
+    // this.physicWorld.broadphase = new CANNON.NaiveBroadphase();
+    // this.physicWorld.gravity.set(0, -10, 0);
+    // var groundShape = new CANNON.Plane();
+    // var groundMaterial = new CANNON.Material();
 
     this.obj = {};
-    this.mario = await this.getMarioModel();
-    // this.getMarioModel();
-    this.world = await this.getWorldModel();
+    this.mario;
+    this.world;
+    try {
+      this.mario = await this.getMarioModel();
+      // this.getMarioModel();
+      this.world = await this.getWorldModel();
+    } catch (e) {
+      console.log(e);
+    }
     this.loadModelIntoScene();
 
     this.RAF();
@@ -142,7 +145,7 @@ class Game {
       }
     });
     // Useless environments = 0,
-    this.Tcontrols.attach(environment[0]);
+    // this.Tcontrols.attach(environment[0]);
     this.obj.worldEnv = environment;
     this.scene.add(this.world);
   }
