@@ -86,7 +86,6 @@ class Game {
 
     this.obj = {};
     // this.mario = await this.getMarioModel();
-    // this.getMarioModel();
     this.world = await this.getWorldModel();
     this.loadModelIntoScene();
 
