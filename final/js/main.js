@@ -93,13 +93,14 @@ class Game {
     this.loadModelIntoScene();
 
     this.RAF();
+    return;
   }
 
   async getMarioModel() {
     const loader = new FBXLoader();
-    loader.setPath("./resources/mario/");
+    loader.setPath("../resources/mario/");
     const anim = new FBXLoader();
-    anim.setPath("./resources/mario/animations/");
+    anim.setPath("../resources/mario/animations/");
     var [idle, run, jump] = await Promise.all([
       loader.loadAsync("idle.fbx"),
       anim.loadAsync("run.fbx"),
