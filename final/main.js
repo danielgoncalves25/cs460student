@@ -8,6 +8,8 @@ import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
 // import { TransformControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/TransformControls.js";
 
 // import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
+// import * as ttc from "https://unpkg.com/three-to-cannon@4.0.2/dist/three-to-cannon.modern.js";
+// import { threeToCannon, ShapeType } from "three-to-cannon";
 
 class Game {
   constructor() {
@@ -60,19 +62,17 @@ class Game {
     controls.target.set(0, 20, 0);
     controls.update();
 
-    this.gui = new GUI();
-    var cameraFolder = this.gui.addFolder("Camera");
-    cameraFolder.add(this.camera.position, "x", -50, 1500);
-    cameraFolder.add(this.camera.position, "y", -200, 200);
-    cameraFolder.add(this.camera.position, "z", -200, 200);
-    cameraFolder.open();
+    // this.gui = new GUI();
+    // var cameraFolder = this.gui.addFolder("Camera");
+    // cameraFolder.add(this.camera.position, "x", -50, 1500);
+    // cameraFolder.add(this.camera.position, "y", -200, 200);
+    // cameraFolder.add(this.camera.position, "z", -200, 200);
+    // cameraFolder.open();
     // this.Tcontrols = new TransformControls(
     //   this.camera,
     //   this.renderer.domElement
     // );
     // this.scene.add(this.Tcontrols);
-    this.raycaster = new THREE.Raycaster();
-    this.mouse = new THREE.Vector2();
 
     // Setup Cannon.js things
     // this.physicWorld = new CANNON.World();
@@ -80,19 +80,14 @@ class Game {
     // const damping = 0.01;
     // this.physicWorld.broadphase = new CANNON.NaiveBroadphase();
     // this.physicWorld.gravity.set(0, -10, 0);
+    // // this.helper = new CannonHelper(this.scene, this.physicWorld);
     // var groundShape = new CANNON.Plane();
     // var groundMaterial = new CANNON.Material();
 
     this.obj = {};
-    this.mario;
-    this.world;
-    try {
-      this.mario = await this.getMarioModel();
-      // this.getMarioModel();
-      this.world = await this.getWorldModel();
-    } catch (e) {
-      console.log(e);
-    }
+    this.mario = await this.getMarioModel();
+    // this.getMarioModel();
+    this.world = await this.getWorldModel();
     this.loadModelIntoScene();
 
     this.RAF();
@@ -104,20 +99,20 @@ class Game {
     loader.setPath("./resources/mario/");
     const anim = new FBXLoader();
     anim.setPath("./resources/mario/animations/");
-    // var [idle, run, jump] = await Promise.all([
-    //   loader.loadAsync("idle.fbx"),
-    //   anim.loadAsync("run.fbx"),
-    //   anim.loadAsync("jump.fbx"),
-    // ]);
-    var [idle] = await Promise.all([loader.loadAsync("idle.fbx")]);
-    // this.animations.push(
-    //   idle.animations[0],
-    //   run.animations[0],
-    //   jump.animations[0]
-    // );
-    // this.currentMixer = new THREE.AnimationMixer(idle);
-    // this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
-    // this.animationAction.play();
+    var [idle, run, jump] = await Promise.all([
+      loader.loadAsync("idle.fbx"),
+      anim.loadAsync("run.fbx"),
+      anim.loadAsync("jump.fbx"),
+    ]);
+    console.log(jump);
+    this.animations.push(
+      idle.animations[0],
+      run.animations[0],
+      jump.animations[0]
+    );
+    this.currentMixer = new THREE.AnimationMixer(idle);
+    this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
+    this.animationAction.play();
 
     return idle;
   }
@@ -166,7 +161,7 @@ class Game {
       this.RAF();
       // this.camera.position.x += 0.3;
       // console.log(this.camera.position);
-      // this.currentMixer.update(0.01);
+      this.currentMixer.update(0.01);
       this.renderer.render(this.scene, this.camera);
     });
   }
@@ -174,6 +169,9 @@ class Game {
 
 let APP = null;
 
-window.addEventListener("DOMContentLoaded", () => {
+// window.addEventListener("DOMContentLoaded", () => {
+//   APP = new Game();
+// });
+window.onload = () => {
   APP = new Game();
-});
+};
