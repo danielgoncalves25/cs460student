@@ -105,6 +105,7 @@ class Game {
       anim.loadAsync("run.fbx"),
       anim.loadAsync("jump.fbx"),
     ]);
+    console.log(jump);
     this.animations.push(
       idle.animations[0],
       run.animations[0],
