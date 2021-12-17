@@ -164,7 +164,7 @@ class Game {
       this.RAF();
       // this.camera.position.x += 0.3;
       // console.log(this.camera.position);
-      this.movementControls.update();
+      // this.movementControls.update();
       this.currentMixer.update(0.01);
       this.renderer.render(this.scene, this.camera);
     });
