@@ -1,13 +1,18 @@
+import * as THREE from "https://threejs.org/build/three.module.js";
+
 export const mcontrols = (function () {
   class _MarioControls {
-    constructor(target) {
-      this.init(target);
+    constructor(params) {
+      this.init(params);
     }
 
-    async init(target) {
-      console.log(target);
-      this.target = await target;
+    async init(params) {
+      console.log(params);
+      this.params = await params;
       this.direction = null;
+      this.controlsUpdate = this.update;
+      this.clock = new THREE.Clock();
+
       document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
       document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
     }
@@ -24,25 +29,22 @@ export const mcontrols = (function () {
       this.direction = "stop";
     }
     onKeyDown(event) {
-      console.log("pressing");
       switch (event.keyCode) {
         case 87: // w
           this.jump();
-          this.update();
+          // this.update();
           break;
         case 32: // spacebar
           this.jump();
-          this.update();
-          d;
+          // this.update();
           break;
         case 65: // a
           this.moveBackward();
-          this.update();
+          // this.update();
           break;
         case 68: // d
           this.moveForward();
-          this.update();
-
+          // this.update();
           break;
         default:
           break;
@@ -50,20 +52,22 @@ export const mcontrols = (function () {
     }
 
     onKeyUp(_) {
-      console.log("stop");
       this.stopMoving();
     }
     update() {
-      const controlObject = this.target;
+      const controlObject = this.params;
+      var velocity = this.clock.getDelta() * 15;
+      // var clock = this.params.clock
+      // var camera = this.params.camera
       switch (this.direction) {
         case "forward":
-          controlObject.position.x += 1;
+          controlObject.position.x += velocity;
           break;
         case "backward":
-          controlObject.position.x -= 1;
+          controlObject.position.x -= velocity;
           break;
         case "jump":
-          controlObject.position.y += 1;
+          controlObject.position.y += velocity;
           break;
         default:
           break;

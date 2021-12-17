@@ -84,7 +84,6 @@ class Game {
     this.mario = await this.getMarioModel();
     this.movementControls = new mcontrols.MarioControls(this.mario);
     console.log(this.movementControls);
-    // console.log(mcontrols);
     // await this.getMarioModel();
     this.loadModelIntoScene();
 
@@ -198,10 +197,10 @@ class Game {
     requestAnimationFrame((t) => {
       this.RAF();
       // this.camera.position.x += 0.3;
-      // this.movementControls.update();
       // console.log(this.movementControls);
       this.controls.update();
       this.updateAnimations();
+      this.movementControls.controlsUpdate();
       this.currentMixer.update(this.clock.getDelta());
       this.renderer.render(this.scene, this.camera);
     });
