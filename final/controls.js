@@ -57,17 +57,18 @@ export const mcontrols = (function () {
     update() {
       const controlObject = this.params;
       var velocity = this.clock.getDelta() * 15;
-      // var clock = this.params.clock
       // var camera = this.params.camera
       switch (this.direction) {
         case "forward":
           controlObject.position.x += velocity;
+          // camera.position.x += velocity;
           break;
         case "backward":
           controlObject.position.x -= velocity;
+          // camera.position.x -= velocity;
           break;
         case "jump":
-          controlObject.position.y += velocity;
+          // controlObject.position.y += velocity;
           break;
         default:
           break;

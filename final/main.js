@@ -196,8 +196,6 @@ class Game {
   RAF() {
     requestAnimationFrame((t) => {
       this.RAF();
-      // this.camera.position.x += 0.3;
-      // console.log(this.movementControls);
       this.controls.update();
       this.updateAnimations();
       this.movementControls.controlsUpdate();
