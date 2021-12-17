@@ -1,17 +1,10 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js";
-// import * as THREEx from "../resources/bower_components/threex.domevents/threex.domevents.js";
-
-import { FBXLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js";
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js";
+import * as THREE from "https://threejs.org/build/three.module.js";
 import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
-// import { TransformControls } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/TransformControls.js";
+import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
+import { FBXLoader } from "https://threejs.org/examples/jsm/loaders/FBXLoader.js";
+import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
 
 // import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
-// import * as ttc from "https://unpkg.com/three-to-cannon@4.0.2/dist/three-to-cannon.modern.js";
-// import { threeToCannon, ShapeType } from "three-to-cannon";
-
-// Hello GitHub, Are you updating???
 class Game {
   constructor() {
     this.Initialize();
