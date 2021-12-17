@@ -52,9 +52,9 @@ class Game {
     let light = new THREE.AmbientLight(0xffffff, 8);
     this.scene.add(light);
 
-    const controls = new OrbitControls(this.camera, this.renderer.domElement);
-    controls.target.set(0, 20, 0);
-    controls.update();
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.target.set(0, 20, 0);
+    this.controls.update();
 
     // this.gui = new GUI();
     // var cameraFolder = this.gui.addFolder("Camera");
@@ -77,11 +77,14 @@ class Game {
     // // this.helper = new CannonHelper(this.scene, this.physicWorld);
     // var groundShape = new CANNON.Plane();
     // var groundMaterial = new CANNON.Material();
+    this.clock = new THREE.Clock();
 
     this.obj = {};
     this.world = await this.getWorldModel();
     this.mario = await this.getMarioModel();
-    // this.movementControls = new mcontrols();
+    this.movementControls = new mcontrols.MarioControls(this.mario);
+    console.log(this.movementControls);
+    // console.log(mcontrols);
     // await this.getMarioModel();
     this.loadModelIntoScene();
 
@@ -105,16 +108,8 @@ class Game {
       jump.animations[0]
     );
     this.currentMixer = new THREE.AnimationMixer(idle);
-    this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
+    this.animationAction = this.currentMixer.clipAction(this.animations[1]);
     this.animationAction.play();
-
-    // const model = await loader.loadAsync("idle.fbx");
-    // console.log(model);
-    // model.scale.set(6, 6, 6);
-    // model.position.set(-100, 10, 20);
-    // model.rotation.y = 1.5;
-    // this.scene.add(model);
-    // return;
 
     return idle;
   }
@@ -147,6 +142,29 @@ class Game {
     this.obj.worldEnv = environment;
     this.scene.add(this.world);
   }
+  idleAnimation() {
+    this.animationAction.stop();
+    this.animationAction = this.currentMixer.clipAction(this.animations[0]);
+    this.animationAction.play();
+  }
+  runningForwardAnimation() {
+    // this.animationAction.stop();
+    this.mario.rotation.y = 1.5;
+    this.animationAction = this.currentMixer.clipAction(this.animations[1]);
+    this.animationAction.play();
+  }
+  runningBackwardAnimation() {
+    // this.animationAction.stop();
+    this.mario.rotation.y = -1.5;
+    this.animationAction = this.currentMixer.clipAction(this.animations[1]);
+    this.animationAction.play();
+  }
+  jumpingAnimation() {
+    console.log("should be jumping");
+    // this.animationAction.stop();
+    this.animationAction = this.currentMixer.clipAction(this.animations[2]);
+    this.animationAction.play();
+  }
 
   CreateCloud(x) {
     console.log("creating clouds at ", x);
@@ -159,13 +177,32 @@ class Game {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  updateAnimations() {
+    switch (this.movementControls.direction) {
+      case "forward":
+        this.runningForwardAnimation();
+        break;
+      case "backward":
+        this.runningBackwardAnimation();
+        break;
+      case "jump":
+        this.jumpingAnimation();
+        break;
+      default:
+        this.idleAnimation();
+        break;
+    }
+  }
+
   RAF() {
     requestAnimationFrame((t) => {
       this.RAF();
       // this.camera.position.x += 0.3;
-      // console.log(this.camera.position);
       // this.movementControls.update();
-      this.currentMixer.update(0.01);
+      // console.log(this.movementControls);
+      this.controls.update();
+      this.updateAnimations();
+      this.currentMixer.update(this.clock.getDelta());
       this.renderer.render(this.scene, this.camera);
     });
   }

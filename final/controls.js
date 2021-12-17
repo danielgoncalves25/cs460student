@@ -1,14 +1,13 @@
-export const mcontrols = () => {
-  class MarioControls {
+export const mcontrols = (function () {
+  class _MarioControls {
     constructor(target) {
       this.init(target);
     }
 
-    init(target) {
+    async init(target) {
       console.log(target);
-      this.target = target;
+      this.target = await target;
       this.direction = null;
-
       document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
       document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
     }
@@ -29,15 +28,21 @@ export const mcontrols = () => {
       switch (event.keyCode) {
         case 87: // w
           this.jump();
+          this.update();
           break;
         case 32: // spacebar
           this.jump();
+          this.update();
+          d;
           break;
         case 65: // a
           this.moveBackward();
+          this.update();
           break;
         case 68: // d
           this.moveForward();
+          this.update();
+
           break;
         default:
           break;
@@ -50,12 +55,22 @@ export const mcontrols = () => {
     }
     update() {
       const controlObject = this.target;
-      // var controlObjectPosition = controlObject
-      // console.log("updating");
-      // this.target.position += 0.01;
+      switch (this.direction) {
+        case "forward":
+          controlObject.position.x += 1;
+          break;
+        case "backward":
+          controlObject.position.x -= 1;
+          break;
+        case "jump":
+          controlObject.position.y += 1;
+          break;
+        default:
+          break;
+      }
     }
   }
   return {
-    MarioControls: MarioControls,
+    MarioControls: _MarioControls,
   };
-};
+})();
