@@ -3,7 +3,7 @@ import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
 import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://threejs.org/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
-
+import { mcontrols } from "./controls.js";
 // import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
 class Game {
   constructor() {
@@ -80,7 +80,9 @@ class Game {
 
     this.obj = {};
     this.world = await this.getWorldModel();
-    await this.getMarioModel();
+    this.mario = await this.getMarioModel();
+    // this.movementControls = new mcontrols();
+    // await this.getMarioModel();
     this.loadModelIntoScene();
 
     this.RAF();
@@ -90,31 +92,31 @@ class Game {
   async getMarioModel() {
     const loader = new FBXLoader();
     loader.setPath("./resources/mario/");
-    // const anim = new FBXLoader();
-    // anim.setPath("./resources/mario/animations/");
-    // var [idle, run, jump] = await Promise.all([
-    //   loader.loadAsync("idle.fbx"),
-    //   anim.loadAsync("run.fbx"),
-    //   anim.loadAsync("jump.fbx"),
-    // ]);
-    // console.log(jump);
-    // this.animations.push(
-    //   idle.animations[0],
-    //   run.animations[0],
-    //   jump.animations[0]
-    // );
-    // this.currentMixer = new THREE.AnimationMixer(idle);
-    // this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
-    // this.animationAction.play();
-    const model = await loader.loadAsync("idle.fbx");
-    console.log(model);
-    model.scale.set(6, 6, 6);
-    model.position.set(-100, 10, 20);
-    model.rotation.y = 1.5;
-    this.scene.add(model);
+    const anim = new FBXLoader();
+    anim.setPath("./resources/mario/animations/");
+    var [idle, run, jump] = await Promise.all([
+      loader.loadAsync("Idle.fbx"),
+      anim.loadAsync("Run.fbx"),
+      anim.loadAsync("Jump.fbx"),
+    ]);
+    this.animations.push(
+      idle.animations[0],
+      run.animations[0],
+      jump.animations[0]
+    );
+    this.currentMixer = new THREE.AnimationMixer(idle);
+    this.animationAction = this.currentMixer.clipAction(idle.animations[0]);
+    this.animationAction.play();
 
-    return;
-    // return idle;
+    // const model = await loader.loadAsync("idle.fbx");
+    // console.log(model);
+    // model.scale.set(6, 6, 6);
+    // model.position.set(-100, 10, 20);
+    // model.rotation.y = 1.5;
+    // this.scene.add(model);
+    // return;
+
+    return idle;
   }
 
   async getWorldModel() {
@@ -126,10 +128,10 @@ class Game {
 
   loadModelIntoScene() {
     // Configure and load mario
-    // this.mario.scale.set(6, 6, 6);
-    // this.mario.position.set(-100, 10, 20);
-    // this.mario.rotation.y = 1.5;
-    // this.scene.add(this.mario);
+    this.mario.scale.set(6, 6, 6);
+    this.mario.position.set(-100, 10, 20);
+    this.mario.rotation.y = 1.5;
+    this.scene.add(this.mario);
 
     // Loads world
     this.world.position.set(200, 0, 0);
@@ -162,7 +164,8 @@ class Game {
       this.RAF();
       // this.camera.position.x += 0.3;
       // console.log(this.camera.position);
-      // this.currentMixer.update(0.01);
+      this.movementControls.update();
+      this.currentMixer.update(0.01);
       this.renderer.render(this.scene, this.camera);
     });
   }
