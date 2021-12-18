@@ -5,8 +5,9 @@ body {
   padding: 0;
   height: 100%;
   overflow: hidden !important;
+  background-color: #87cefa;
 
-  background-image: url(resources/gameBackground.png);
+  /* background-image: url(resources/gameBackground.png);
   background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background-size: 100% 100%; */
 }

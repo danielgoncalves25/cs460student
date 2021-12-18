@@ -7,7 +7,6 @@ export const mcontrols = (function () {
     }
 
     async init(params) {
-      console.log(params);
       this.params = await params;
       this.direction = null;
       this.controlsUpdate = this.update;
@@ -55,12 +54,13 @@ export const mcontrols = (function () {
       this.stopMoving();
     }
     update() {
-      const controlObject = this.params;
-      var velocity = this.clock.getDelta() * 15;
-      // var camera = this.params.camera
+      const controlObject = this.params.target;
+      var velocity = this.clock.getDelta() * 25;
+      var camera = this.params.camera;
       switch (this.direction) {
         case "forward":
           controlObject.position.x += velocity;
+          // controlObject.position.x += 1;
           // camera.position.x += velocity;
           break;
         case "backward":
