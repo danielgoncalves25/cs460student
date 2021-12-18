@@ -43,7 +43,7 @@ class Game {
     this.scene.add(light);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.target.set(0, 20, 0);
+    // this.controls.target.set(200, 0, 0);
     this.controls.update();
 
     this.gui = new GUI();
@@ -54,12 +54,15 @@ class Game {
     cameraFolder.open();
 
     this.clock = new THREE.Clock();
-
-    this.obj = {};
+    this.collision = false;
     this.world = await this.getWorldModel();
     this.mario = await this.getMarioModel();
     this.pipes = this.createPipes();
-    this.movementControls = new mcontrols.MarioControls({ target: this.mario });
+    this.movementControls = new mcontrols.MarioControls({
+      target: this.mario,
+      camera: this.camera,
+      collision: this.collision,
+    });
     this.loadModelIntoScene();
 
     this.RAF();
@@ -214,6 +217,7 @@ class Game {
       //   this.mario.position.y + 20,
       //   this.mario.position.z + 150
       // );
+      this.controls.target.set(this.mario.position.x, 0, 0);
       var delta = Math.min(this.clock.getDelta(), 0.1);
       this.controls.update();
       this.updateAnimations();

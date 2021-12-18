@@ -70,30 +70,19 @@ export const mcontrols = (function () {
       const controlObject = this.params.target;
       var velocity = this.clock.getDelta() * 25;
       var camera = this.params.camera;
-      var tween = new TWEEN.Tween(controlObject.position);
-      // .to({x: 200}, 1000).start()
+      // var collision = this.params.collision;
       switch (this.direction) {
         case "forward":
           controlObject.position.x += velocity;
-          // controlObject.position.x += 1;
-          // camera.position.x += velocity;
+          camera.position.x += velocity;
           break;
         case "backward":
           controlObject.position.x -= velocity;
-          // camera.position.x -= velocity;
+          camera.position.x -= velocity;
+
           break;
         case "jump":
-          // tween
-          //   .to({ y: controlObject.position.y + Math.sin(velocity) + 0.5 }, 500)
-          //   .onComplete(() => {
-          //     console.log("done");
-          //   });
-          // tween.start();
           controlObject.position.y += Math.sin(velocity) + 0.5;
-          // tween.delay(0.05);
-          // controlObject.position.y -= Math.sin(velocity) + 0.5;
-          // tween.to({ y: 10 }, 50).start();
-          // Math.sin(this.vAngle) + 1.38;
           break;
         default:
           break;
