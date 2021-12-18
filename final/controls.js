@@ -50,13 +50,28 @@ export const mcontrols = (function () {
       }
     }
 
-    onKeyUp(_) {
+    onKeyUp(event) {
       this.stopMoving();
+
+      // switch (event.keyCode) {
+      //   case 87: // w
+      //     this.jump();
+      //     this.stopMoving();
+      //     break;
+      //   case 32: // spacebar
+      //     this.jump();
+      //     this.stopMoving();
+      //   default:
+      //     this.stopMoving();
+      //     break;
+      // }
     }
     update() {
       const controlObject = this.params.target;
       var velocity = this.clock.getDelta() * 25;
       var camera = this.params.camera;
+      var tween = new TWEEN.Tween(controlObject.position);
+      // .to({x: 200}, 1000).start()
       switch (this.direction) {
         case "forward":
           controlObject.position.x += velocity;
@@ -68,7 +83,17 @@ export const mcontrols = (function () {
           // camera.position.x -= velocity;
           break;
         case "jump":
-          // controlObject.position.y += velocity;
+          // tween
+          //   .to({ y: controlObject.position.y + Math.sin(velocity) + 0.5 }, 500)
+          //   .onComplete(() => {
+          //     console.log("done");
+          //   });
+          // tween.start();
+          controlObject.position.y += Math.sin(velocity) + 0.5;
+          // tween.delay(0.05);
+          // controlObject.position.y -= Math.sin(velocity) + 0.5;
+          // tween.to({ y: 10 }, 50).start();
+          // Math.sin(this.vAngle) + 1.38;
           break;
         default:
           break;

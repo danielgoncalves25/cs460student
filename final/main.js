@@ -35,20 +35,9 @@ class Game {
     const near = 1.0;
     const far = 1000.0;
     this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    // this.camera.position.set(0, 0, 500);
     this.camera.position.set(-20, 37, 193);
     this.scene = new THREE.Scene();
     this.scene.add(new THREE.AxesHelper(5));
-
-    // for (var i = -50; i < 1500; i += 300) {
-    //   let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    //   directionalLight.lookAt(0, 0, 16);
-    //   directionalLight.position.set(i, 100, 16);
-    //   this.scene.add(directionalLight);
-    //   let hemiLight = new THREE.HemisphereLight(0x99ccff, 0xffffff, 0.5);
-    //   hemiLight.position.set(i, 70, 16);
-    //   this.scene.add(hemiLight);
-    // }
 
     let light = new THREE.AmbientLight(0xffffff, 8);
     this.scene.add(light);
@@ -67,20 +56,11 @@ class Game {
     this.clock = new THREE.Clock();
 
     this.obj = {};
-    this.pipes = null;
     this.world = await this.getWorldModel();
     this.mario = await this.getMarioModel();
-    this.movementControls = new mcontrols.MarioControls({
-      target: this.mario,
-      world: this.world,
-    });
+    this.pipes = this.createPipes();
+    this.movementControls = new mcontrols.MarioControls({ target: this.mario });
     this.loadModelIntoScene();
-    // console.log(this.pipes);
-    // this.helper = new THREE.Box3Helper(
-    //   this.pipes.geometry.boundingBox,
-    //   0xff0000
-    // );
-    // this.scene.add(this.helper);
 
     this.RAF();
     return;
@@ -104,7 +84,6 @@ class Game {
     this.currentMixer = new THREE.AnimationMixer(idle);
     this.animationAction = this.currentMixer.clipAction(this.animations[1]);
     this.animationAction.play();
-    // console.log(idle);
 
     return idle;
   }
@@ -123,33 +102,57 @@ class Game {
     this.mario.rotation.y = 1.5;
     var marioFolder = this.gui.addFolder("mario");
     marioFolder.add(this.mario.position, "x", -1500, 1500);
-    marioFolder.add(this.mario.position, "y", -20, 20);
+    marioFolder.add(this.mario.position, "y", -20, 40);
     marioFolder.add(this.mario.position, "z", -1500, 1500);
     marioFolder.open();
     this.scene.add(this.mario);
 
     // Loads world
     this.world.position.set(200, 0, 0);
-
     this.world.scale.set(5, 5, 5);
-    var environment = [];
-    this.world.traverse((node) => {
-      if (node.isMesh) {
-        node.geometry.computeBoundingBox();
-        environment.push(node);
-      }
-    });
-    // environment[0].material.color.setHex(0xff0000);
-    environment.forEach((env) => {
-      if (env.name.includes("pipe1")) {
-        this.pipes = env;
-        // env.visible = false;
-        // env.material.color.setHex(0xff0000);
-      }
-    });
-    console.log(environment);
-    this.obj.worldEnv = environment;
     this.scene.add(this.world);
+  }
+
+  createPipes() {
+    var geometry = new THREE.BoxGeometry(9, 15, 12);
+    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var pipe1 = new THREE.Mesh(geometry, material);
+    pipe1.position.set(18, 13, 20);
+    pipe1.geometry.computeBoundingBox();
+    pipe1.visible = false;
+
+    var geometry = new THREE.BoxGeometry(9, 17, 12);
+    var pipe2 = new THREE.Mesh(geometry, material);
+    pipe2.position.set(69.5, 17, 20);
+    pipe2.geometry.computeBoundingBox();
+    pipe2.visible = false;
+
+    var geometry = new THREE.BoxGeometry(9, 22, 12);
+    var pipe3 = new THREE.Mesh(geometry, material);
+    pipe3.position.set(111, 21, 20);
+    pipe3.geometry.computeBoundingBox();
+    pipe3.visible = false;
+
+    var geometry = new THREE.BoxGeometry(9, 22, 12);
+    var pipe4 = new THREE.Mesh(geometry, material);
+    pipe4.position.set(168, 21, 20);
+    pipe4.geometry.computeBoundingBox();
+    pipe4.visible = false;
+
+    this.scene.add(pipe1);
+    this.scene.add(pipe2);
+    this.scene.add(pipe3);
+    this.scene.add(pipe4);
+    return [pipe1, pipe2, pipe3, pipe4];
+  }
+
+  detectPipeCollision() {
+    this.pipes.forEach((pipe) => {
+      var marioBox = new THREE.Box3().setFromObject(this.mario);
+      var pipeBox = new THREE.Box3().setFromObject(pipe);
+      var collision = marioBox.intersectsBox(pipeBox);
+      this.collision = collision;
+    });
   }
   idleAnimation() {
     this.animationAction.stop();
@@ -203,7 +206,7 @@ class Game {
   }
 
   RAF() {
-    requestAnimationFrame((t) => {
+    requestAnimationFrame((_) => {
       this.RAF();
       // this.camera.position.z += 0.3;
       // this.camera.position.set(
@@ -211,17 +214,12 @@ class Game {
       //   this.mario.position.y + 20,
       //   this.mario.position.z + 150
       // );
-      // var firstBB = new THREE.Box3().setFromObject(this.mario);
-      // var secondBB = new THREE.Box3().setFromObject(this.pipes);
-      // var collision = firstBB.intersectsBox(secondBB);
-      // if (collision) {
-      //   console.log("HITTT");
-      // }
       var delta = Math.min(this.clock.getDelta(), 0.1);
       this.controls.update();
       this.updateAnimations();
-      this.movementControls.controlsUpdate();
+      this.movementControls.controlsUpdate(delta);
       this.currentMixer.update(delta);
+      this.detectPipeCollision();
       this.renderer.render(this.scene, this.camera);
     });
   }
