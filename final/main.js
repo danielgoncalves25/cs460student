@@ -3,6 +3,7 @@ import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
 import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://threejs.org/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
+// import { TWEEN } from "https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/libs/tween.module.min.js";
 
 import { mcontrols } from "./controls.js";
 import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
@@ -13,6 +14,7 @@ class Game {
   }
 
   async Initialize() {
+    this.raycaster = new THREE.Raycaster();
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -43,7 +45,6 @@ class Game {
     this.scene.add(light);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    // this.controls.target.set(200, 0, 0);
     this.controls.update();
 
     this.gui = new GUI();
@@ -52,6 +53,11 @@ class Game {
     cameraFolder.add(this.camera.position, "y", -200, 200);
     cameraFolder.add(this.camera.position, "z", -200, 200);
     cameraFolder.open();
+
+    // var geometry = new THREE.BoxGeometry(9, 15, 12);
+    // const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    // this.cube = new THREE.Mesh(geometry, material);
+    // this.scene.add(this.cube);
 
     this.clock = new THREE.Clock();
     this.collision = false;
@@ -64,7 +70,6 @@ class Game {
       collision: this.collision,
     });
     this.loadModelIntoScene();
-
     this.RAF();
     return;
   }
@@ -85,7 +90,7 @@ class Game {
       jump.animations[0]
     );
     this.currentMixer = new THREE.AnimationMixer(idle);
-    this.animationAction = this.currentMixer.clipAction(this.animations[1]);
+    this.animationAction = this.currentMixer.clipAction(this.animations[0]);
     this.animationAction.play();
 
     return idle;
@@ -106,7 +111,7 @@ class Game {
     var marioFolder = this.gui.addFolder("mario");
     marioFolder.add(this.mario.position, "x", -1500, 1500);
     marioFolder.add(this.mario.position, "y", -20, 40);
-    marioFolder.add(this.mario.position, "z", -1500, 1500);
+    marioFolder.add(this.mario.position, "z", 0, 35);
     marioFolder.open();
     this.scene.add(this.mario);
 
@@ -148,12 +153,14 @@ class Game {
     this.scene.add(pipe4);
     return [pipe1, pipe2, pipe3, pipe4];
   }
-
   detectPipeCollision() {
     this.pipes.forEach((pipe) => {
       var marioBox = new THREE.Box3().setFromObject(this.mario);
       var pipeBox = new THREE.Box3().setFromObject(pipe);
       var collision = marioBox.intersectsBox(pipeBox);
+      if (collision) {
+        console.log("collison");
+      }
       this.collision = collision;
     });
   }
@@ -192,33 +199,22 @@ class Game {
   }
 
   updateAnimations() {
-    switch (this.movementControls.direction) {
-      case "forward":
-        this.runningForwardAnimation();
-        break;
-      case "backward":
-        this.runningBackwardAnimation();
-        break;
-      case "jump":
-        this.jumpingAnimation();
-        break;
-      default:
-        this.idleAnimation();
-        break;
+    if (this.movementControls.directions.forward) {
+      this.runningForwardAnimation();
+    }
+    if (this.movementControls.directions.backward) {
+      this.runningBackwardAnimation();
+    }
+    if (this.movementControls.directions.up) {
+      this.jumpingAnimation();
     }
   }
 
   RAF() {
     requestAnimationFrame((_) => {
-      this.RAF();
-      // this.camera.position.z += 0.3;
-      // this.camera.position.set(
-      //   this.mario.position.x,
-      //   this.mario.position.y + 20,
-      //   this.mario.position.z + 150
-      // );
-      this.controls.target.set(this.mario.position.x, 0, 0);
       var delta = Math.min(this.clock.getDelta(), 0.1);
+      this.RAF();
+      this.controls.target.set(this.mario.position.x, 0, 0);
       this.controls.update();
       this.updateAnimations();
       this.movementControls.controlsUpdate(delta);
