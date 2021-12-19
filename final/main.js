@@ -3,7 +3,6 @@ import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
 import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://threejs.org/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
-// import { TWEEN } from "https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/libs/tween.module.min.js";
 
 import { mcontrols } from "./controls.js";
 import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
@@ -48,6 +47,7 @@ class Game {
     this.controls.update();
 
     this.gui = new GUI();
+    this.jumpAudios = [];
     var cameraFolder = this.gui.addFolder("Camera");
     cameraFolder.add(this.camera.position, "x", -50, 1500);
     cameraFolder.add(this.camera.position, "y", -200, 200);
@@ -64,16 +64,33 @@ class Game {
     this.world = await this.getWorldModel();
     this.mario = await this.getMarioModel();
     this.pipes = this.createPipes();
+    this.loadModelIntoScene();
+    this.loadThemeAudio();
+    const jumpAudioLoader = new THREE.AudioLoader();
+    const jumpListener = new THREE.AudioListener();
+    var jumpAudio = new THREE.Audio(jumpListener);
+    jumpAudioLoader.load("./resources/jump.mp3", function (buffer) {
+      jumpAudio.setBuffer(buffer);
+      jumpAudio.setVolume(0.3);
+    });
     this.movementControls = new mcontrols.MarioControls({
       target: this.mario,
       camera: this.camera,
-      collision: this.collision,
+      playJumpAudio: () => jumpAudio.play(),
     });
-    this.loadModelIntoScene();
     this.RAF();
     return;
   }
-
+  loadThemeAudio() {
+    var themeAudioLoader = new THREE.AudioLoader();
+    var themeListener = new THREE.AudioListener();
+    var themeAudio = new THREE.Audio(themeListener);
+    themeAudioLoader.load("./resources/themeSong.mp3", function (buffer) {
+      themeAudio.setBuffer(buffer);
+      themeAudio.autoplay = true;
+      themeAudio.play();
+    });
+  }
   async getMarioModel() {
     const loader = new FBXLoader();
     loader.setPath("./resources/mario/");
@@ -141,7 +158,6 @@ class Game {
     pipe3.geometry.computeBoundingBox();
     pipe3.visible = false;
 
-    var geometry = new THREE.BoxGeometry(9, 22, 12);
     var pipe4 = new THREE.Mesh(geometry, material);
     pipe4.position.set(168, 21, 20);
     pipe4.geometry.computeBoundingBox();
@@ -154,15 +170,18 @@ class Game {
     return [pipe1, pipe2, pipe3, pipe4];
   }
   detectPipeCollision() {
-    this.pipes.forEach((pipe) => {
-      var marioBox = new THREE.Box3().setFromObject(this.mario);
-      var pipeBox = new THREE.Box3().setFromObject(pipe);
-      var collision = marioBox.intersectsBox(pipeBox);
-      if (collision) {
-        console.log("collison");
-      }
-      this.collision = collision;
-    });
+    var marioBox = new THREE.Box3().setFromObject(this.mario);
+    var marioBox = new THREE.Box3().setFromObject(this.mario);
+    var pipeBox1 = new THREE.Box3().setFromObject(this.pipes[0]);
+    var pipeBox2 = new THREE.Box3().setFromObject(this.pipes[1]);
+    var pipeBox3 = new THREE.Box3().setFromObject(this.pipes[2]);
+    var pipeBox4 = new THREE.Box3().setFromObject(this.pipes[3]);
+    var collision1 = marioBox.intersectsBox(pipeBox1);
+    var collision2 = marioBox.intersectsBox(pipeBox2);
+    var collision3 = marioBox.intersectsBox(pipeBox3);
+    var collision4 = marioBox.intersectsBox(pipeBox4);
+
+    this.collision = collision1 || collision2 || collision3 || collision4;
   }
   idleAnimation() {
     this.animationAction.stop();
@@ -183,6 +202,7 @@ class Game {
   }
   jumpingAnimation() {
     // this.animationAction.stop();
+    // this.playJumpAudio();
     this.animationAction = this.currentMixer.clipAction(this.animations[2]);
     this.animationAction.play();
   }
@@ -214,10 +234,11 @@ class Game {
     requestAnimationFrame((_) => {
       var delta = Math.min(this.clock.getDelta(), 0.1);
       this.RAF();
+      // console.log(this.collision);
       this.controls.target.set(this.mario.position.x, 0, 0);
       this.controls.update();
       this.updateAnimations();
-      this.movementControls.controlsUpdate(delta);
+      this.movementControls.controlsUpdate(this.collision);
       this.currentMixer.update(delta);
       this.detectPipeCollision();
       this.renderer.render(this.scene, this.camera);

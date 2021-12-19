@@ -61,13 +61,14 @@ export const mcontrols = (function () {
           break;
       }
     }
-    update() {
+    update(isCollision) {
       const controlObject = this.params.target;
-      var velocity = this.clock.getDelta() * 25;
+      var velocity = this.clock.getDelta() * 17;
       var camera = this.params.camera;
-      var collision = this.params.collision;
-      if (collision) {
-        console.log("collison");
+      var jumpAudio = this.params.playJumpAudio;
+      // var collision = this.params.collision;
+      if (isCollision) {
+        console.log("collison from controls upadte");
       }
       if (this.directions.forward) {
         controlObject.position.x += velocity;
@@ -77,7 +78,8 @@ export const mcontrols = (function () {
         controlObject.position.x -= velocity;
         camera.position.x -= velocity;
       }
-      if (this.directions.up) {
+      if (this.directions.up && controlObject.position.y == 10) {
+        jumpAudio();
         createjs.Ticker.timingMode = createjs.Ticker.RAF;
         createjs.Tween.get(controlObject.position)
           .to(
