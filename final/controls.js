@@ -1,5 +1,4 @@
 import * as THREE from "https://threejs.org/build/three.module.js";
-// import { TWEEN } from "https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/libs/tween.module.min.js";
 
 export const mcontrols = (function () {
   class _MarioControls {
@@ -26,15 +25,19 @@ export const mcontrols = (function () {
       switch (event.keyCode) {
         case 87: // w
           this.directions.up = true;
+          this.directions.idle = false;
           break;
         case 32: // spacebar
           this.directions.up = true;
+          this.directions.idle = false;
           break;
         case 65: // a
           this.directions.backward = true;
+          this.directions.idle = false;
           break;
         case 68: // d
           this.directions.forward = true;
+          this.directions.idle = false;
           break;
         default:
           this.directions.idle = false;
@@ -44,35 +47,44 @@ export const mcontrols = (function () {
 
     onKeyUp(event) {
       switch (event.keyCode) {
-        case 87: // w
-          this.directions.up = false;
-          break;
-        case 32: // spacebar
-          this.directions.up = false;
-          break;
+        // case 87: // w
+        //   this.directions.up = false;
+        //   this.directions.idle = true;
+        //   break;
+        // case 32: // spacebar
+        //   this.directions.up = false;
+        //   this.directions.idle = true;
+        //   break;
         case 65: // a
           this.directions.backward = false;
+          this.directions.idle = true;
           break;
         case 68: // d
           this.directions.forward = false;
+          this.directions.idle = true;
           break;
         default:
-          this.directions.idle = true;
+          this.directions.idle = false;
           break;
       }
     }
     update(isCollision) {
+      // console.log(this.directions);
       const controlObject = this.params.target;
       var velocity = this.clock.getDelta() * 17;
       var camera = this.params.camera;
       var jumpAudio = this.params.playJumpAudio;
-      // var collision = this.params.collision;
-      if (isCollision) {
-        console.log("collison from controls upadte");
-      }
+      // if (isCollision) {
+      //   console.log("collison from controls upadte");
+      // }
       if (this.directions.forward) {
-        controlObject.position.x += velocity;
-        camera.position.x += velocity;
+        if (controlObject.position.y > 10) {
+          controlObject.position.x += velocity + 0.1;
+          camera.position.x += velocity + 0.1;
+        } else {
+          camera.position.x += velocity;
+          controlObject.position.x += velocity;
+        }
       }
       if (this.directions.backward) {
         controlObject.position.x -= velocity;
@@ -84,11 +96,13 @@ export const mcontrols = (function () {
         createjs.Tween.get(controlObject.position)
           .to(
             { y: (Math.cos(velocity) + 0.5) * 25 },
-            500,
+            400,
             createjs.Ease.getPowInOut(3)
           )
-          .wait(200)
-          .to({ y: 10 }, 500, createjs.Ease.getPowInOut(3));
+          .wait(100)
+          .to({ y: 10 }, 400, createjs.Ease.getPowInOut(3));
+        this.directions.up = false;
+        this.directions.idle = true;
       }
     }
   }

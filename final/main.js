@@ -3,9 +3,9 @@ import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
 import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://threejs.org/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
+// import { InteractionManager } from "https://cdn.jsdelivr.net/npm/three.interactive@1.1.0/build/three.interactive.js";
 
 import { mcontrols } from "./controls.js";
-import * as CANNON from "https://cdn.jsdelivr.net/npm/cannon-es@0.18.0/dist/cannon-es.js";
 
 class Game {
   constructor() {
@@ -36,7 +36,7 @@ class Game {
     const near = 1.0;
     const far = 1000.0;
     this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.camera.position.set(-20, 37, 193);
+    this.camera.position.set(-98, 38, 178);
     this.scene = new THREE.Scene();
     this.scene.add(new THREE.AxesHelper(5));
 
@@ -45,19 +45,6 @@ class Game {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.update();
-
-    this.gui = new GUI();
-    this.jumpAudios = [];
-    var cameraFolder = this.gui.addFolder("Camera");
-    cameraFolder.add(this.camera.position, "x", -50, 1500);
-    cameraFolder.add(this.camera.position, "y", -200, 200);
-    cameraFolder.add(this.camera.position, "z", -200, 200);
-    cameraFolder.open();
-
-    // var geometry = new THREE.BoxGeometry(9, 15, 12);
-    // const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    // this.cube = new THREE.Mesh(geometry, material);
-    // this.scene.add(this.cube);
 
     this.clock = new THREE.Clock();
     this.collision = false;
@@ -81,14 +68,15 @@ class Game {
     this.RAF();
     return;
   }
+
   loadThemeAudio() {
     var themeAudioLoader = new THREE.AudioLoader();
     var themeListener = new THREE.AudioListener();
     var themeAudio = new THREE.Audio(themeListener);
     themeAudioLoader.load("./resources/themeSong.mp3", function (buffer) {
       themeAudio.setBuffer(buffer);
-      themeAudio.autoplay = true;
-      themeAudio.play();
+      // themeAudio.autoplay = true;
+      // themeAudio.play();
     });
   }
   async getMarioModel() {
@@ -125,13 +113,7 @@ class Game {
     this.mario.scale.set(6, 6, 6);
     this.mario.position.set(-100, 10, 20);
     this.mario.rotation.y = 1.5;
-    var marioFolder = this.gui.addFolder("mario");
-    marioFolder.add(this.mario.position, "x", -1500, 1500);
-    marioFolder.add(this.mario.position, "y", -20, 40);
-    marioFolder.add(this.mario.position, "z", 0, 35);
-    marioFolder.open();
     this.scene.add(this.mario);
-
     // Loads world
     this.world.position.set(200, 0, 0);
     this.world.scale.set(5, 5, 5);
@@ -202,7 +184,6 @@ class Game {
   }
   jumpingAnimation() {
     // this.animationAction.stop();
-    // this.playJumpAudio();
     this.animationAction = this.currentMixer.clipAction(this.animations[2]);
     this.animationAction.play();
   }
@@ -219,6 +200,10 @@ class Game {
   }
 
   updateAnimations() {
+    if (this.movementControls.directions.idle) {
+      // console.log(this.movementControls.directions.idle);
+      this.idleAnimation();
+    }
     if (this.movementControls.directions.forward) {
       this.runningForwardAnimation();
     }
@@ -235,6 +220,7 @@ class Game {
       var delta = Math.min(this.clock.getDelta(), 0.1);
       this.RAF();
       // console.log(this.collision);
+      // console.log(this.camera.position);
       this.controls.target.set(this.mario.position.x, 0, 0);
       this.controls.update();
       this.updateAnimations();
