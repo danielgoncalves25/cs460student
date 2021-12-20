@@ -65,6 +65,10 @@ class Game {
       camera: this.camera,
       playJumpAudio: () => jumpAudio.play(),
     });
+    this.CreateCloud(0);
+    for (var i = -100; i < 1300; i += 100) {
+      this.CreateCloud(i);
+    }
     this.RAF();
     return;
   }
@@ -190,7 +194,30 @@ class Game {
 
   CreateCloud(x) {
     console.log("creating clouds at ", x);
-    console.log(this.raycaster);
+    const mat = new THREE.MeshPhongMaterial({
+      color: "white",
+      flatShading: true,
+    });
+    const tuft1 = new THREE.SphereGeometry(1.5, 7, 8);
+    tuft1.translate(-2, 0, 0);
+    var cloud1 = new THREE.Mesh(tuft1, mat);
+    cloud1.position.set(x, 80, -120);
+    cloud1.scale.set(3, 3, 3);
+
+    const tuft2 = new THREE.SphereGeometry(1.5, 7, 8);
+    tuft2.translate(2, 0, 0);
+    var cloud2 = new THREE.Mesh(tuft2, mat);
+    cloud2.position.set(x, 80, -120);
+    cloud2.scale.set(3, 3, 3);
+
+    const tuft3 = new THREE.SphereGeometry(2.0, 7, 8);
+    tuft3.translate(0, 0, 0);
+    var cloud3 = new THREE.Mesh(tuft3, mat);
+    cloud3.position.set(x, 80, -120);
+    cloud3.scale.set(3, 3, 3);
+    this.scene.add(cloud1);
+    this.scene.add(cloud2);
+    this.scene.add(cloud3);
   }
 
   OnWindowResize() {
