@@ -35,6 +35,8 @@ class Game {
     const aspect = 1920 / 1080;
     const near = 1.0;
     const far = 1000.0;
+    this.gui = new GUI();
+
     this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     this.camera.position.set(-98, 38, 178);
     this.scene = new THREE.Scene();
@@ -49,6 +51,7 @@ class Game {
     this.clock = new THREE.Clock();
     this.sideCollision = false;
     this.topCollision = false;
+    this.deathZoneCollision = false;
     this.world = await this.getWorldModel();
     this.mario = await this.getMarioModel();
     this.parts = this.createPipes();
@@ -115,7 +118,8 @@ class Game {
   loadModelIntoScene() {
     // Configure and load mario
     this.mario.scale.set(6, 6, 6);
-    this.mario.position.set(-100, 10, 20);
+    // this.mario.position.set(-100, 10, 20);
+    this.mario.position.set(218, 10, 20);
     this.mario.rotation.y = 1.5;
     this.scene.add(this.mario);
     // Loads world
@@ -130,24 +134,24 @@ class Game {
     var sidePipe1 = new THREE.Mesh(geometry, material);
     sidePipe1.position.set(18, 10, 20);
     sidePipe1.geometry.computeBoundingBox();
-    sidePipe1.visible = false;
+    // sidePipe1.visible = false;
 
     var geometry = new THREE.BoxGeometry(9, 17, 12);
     var sidePipe2 = new THREE.Mesh(geometry, material);
     sidePipe2.position.set(69.5, 14, 20);
     sidePipe2.geometry.computeBoundingBox();
-    sidePipe2.visible = false;
+    // sidePipe2.visible = false;
 
     var geometry = new THREE.BoxGeometry(9, 22, 12);
     var sidePipe3 = new THREE.Mesh(geometry, material);
     sidePipe3.position.set(111, 19, 20);
     sidePipe3.geometry.computeBoundingBox();
-    sidePipe3.visible = false;
+    // sidePipe3.visible = false;
 
     var sidePipe4 = new THREE.Mesh(geometry, material);
     sidePipe4.position.set(168, 18, 20);
     sidePipe4.geometry.computeBoundingBox();
-    sidePipe4.visible = false;
+    // sidePipe4.visible = false;
 
     var geometry = new THREE.BoxGeometry(10, 0.1, 12);
     var topPipe1 = new THREE.Mesh(geometry, material);
@@ -175,7 +179,19 @@ class Game {
     topPipe4.position.set(168, 32, 20);
     topPipe4.material.color.setHex(0xff0000);
     topPipe4.geometry.computeBoundingBox();
-    // topPipe4.visible = false;
+
+    var geometry = new THREE.BoxGeometry(17, 0.1, 50);
+    var deathZone1 = new THREE.Mesh(geometry, material);
+    deathZone1.position.set(235.5, 10, 20);
+    deathZone1.material.color.setHex(0xff0000);
+    deathZone1.geometry.computeBoundingBox();
+    // deathZone1.visible = false;
+    var geometry = new THREE.BoxGeometry(14, 0.1, 50);
+    var deathZone2 = new THREE.Mesh(geometry, material);
+    deathZone2.position.set(329, 10, 20);
+    deathZone2.material.color.setHex(0xff0000);
+    deathZone2.geometry.computeBoundingBox();
+    // deathZone2.visible = false;
 
     this.scene.add(sidePipe1);
     this.scene.add(sidePipe2);
@@ -185,10 +201,13 @@ class Game {
     this.scene.add(topPipe2);
     this.scene.add(topPipe3);
     this.scene.add(topPipe4);
+    this.scene.add(deathZone1);
+    this.scene.add(deathZone2);
 
     var collisonParts = {
       side: [sidePipe1, sidePipe2, sidePipe3, sidePipe4],
       top: [topPipe1, topPipe2, topPipe3, topPipe4],
+      death: [deathZone1, deathZone2],
     };
     return collisonParts;
   }
@@ -212,14 +231,17 @@ class Game {
     var topcollision3 = marioBox.intersectsBox(topPipeBox3);
     var topcollision4 = marioBox.intersectsBox(topPipeBox4);
 
+    var deathBox1 = new THREE.Box3().setFromObject(this.parts["death"][0]);
+    var deathBox2 = new THREE.Box3().setFromObject(this.parts["death"][1]);
+
+    var deathZone1 = marioBox.intersectsBox(deathBox1);
+    var deathZone2 = marioBox.intersectsBox(deathBox2);
+
     this.sideCollision =
       sidecollision1 || sidecollision2 || sidecollision3 || sidecollision4;
     this.topCollision =
       topcollision1 || topcollision2 || topcollision3 || topcollision4;
-    // if (this.topCollision && !this.movementControls.directions.up) {
-    //   console.log("stay");
-    //   this.mario.position.y = this.mario.position.y;
-    // }
+    this.deathZoneCollision = deathZone1 || deathZone2;
   }
   idleAnimation() {
     this.animationAction.stop();
@@ -304,7 +326,8 @@ class Game {
       this.updateAnimations();
       this.movementControls.controlsUpdate(
         this.sideCollision,
-        this.topCollision
+        this.topCollision,
+        this.deathZoneCollision
       );
       this.currentMixer.update(delta);
       this.detectPipeCollision();

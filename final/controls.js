@@ -68,48 +68,58 @@ export const mcontrols = (function () {
           break;
       }
     }
-    update(sideCollision, topCollision) {
+    update(sideCollision, topCollision, deathZone) {
       function jumpEvent() {
         createjs.Ticker.timingMode = createjs.Ticker.RAF;
         createjs.Tween.get(controlObject.position)
           .to(
             { y: (Math.cos(velocity) + 0.5) * 25 },
-            400,
+            300,
             createjs.Ease.getPowInOut(3)
           )
           .wait(100)
-          .to({ y: 10 }, 400, createjs.Ease.getPowInOut(3));
+          .to({ y: 10 }, 300, createjs.Ease.getPowInOut(3));
       }
       // console.log(topCollision);
       const controlObject = this.params.target;
       var velocity = this.clock.getDelta() * 17;
       var camera = this.params.camera;
       var jumpAudio = this.params.playJumpAudio;
-
-      if (this.directions.forward && !sideCollision) {
-        if (controlObject.position.y > 10) {
-          controlObject.position.x += velocity + 0.1;
-          camera.position.x += velocity + 0.1;
-        } else {
-          camera.position.x += velocity;
-          controlObject.position.x += velocity;
+      if (!deathZone) {
+        if (this.directions.forward && !sideCollision) {
+          if (controlObject.position.y > 10) {
+            controlObject.position.x += velocity + 0.15;
+            camera.position.x += velocity + 0.15;
+          } else {
+            camera.position.x += velocity;
+            controlObject.position.x += velocity;
+          }
         }
+        if (this.directions.backward && !sideCollision) {
+          if (controlObject.position.y > 10) {
+            controlObject.position.x -= velocity + 0.15;
+            camera.position.x -= velocity + 0.15;
+          } else {
+            camera.position.x -= velocity;
+            controlObject.position.x -= velocity;
+          }
+        }
+        if (this.directions.up && controlObject.position.y == 10) {
+          jumpAudio();
+          jumpEvent();
+          this.directions.up = false;
+          this.directions.idle = true;
+        }
+        if (topCollision) createjs.Ticker.paused = true;
+        else createjs.Ticker.paused = false;
+      } else {
+        // fall to death
+        createjs.Tween.get(controlObject.position).to(
+          { y: -100 },
+          1500,
+          createjs.Ease.quadIn()
+        );
       }
-      if (this.directions.backward && !sideCollision) {
-        controlObject.position.x -= velocity;
-        camera.position.x -= velocity;
-      }
-      if (
-        (this.directions.up && controlObject.position.y == 10) ||
-        (this.directions.up && topCollision)
-      ) {
-        jumpAudio();
-        jumpEvent();
-        this.directions.up = false;
-        this.directions.idle = true;
-      }
-      if (topCollision) createjs.Ticker.paused = true;
-      else createjs.Ticker.paused = false;
     }
   }
   return {
