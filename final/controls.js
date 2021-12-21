@@ -47,14 +47,6 @@ export const mcontrols = (function () {
 
     onKeyUp(event) {
       switch (event.keyCode) {
-        // case 87: // w
-        //   this.directions.up = false;
-        //   this.directions.idle = true;
-        //   break;
-        // case 32: // spacebar
-        //   this.directions.up = false;
-        //   this.directions.idle = true;
-        //   break;
         case 65: // a
           this.directions.backward = false;
           this.directions.idle = true;
@@ -85,7 +77,7 @@ export const mcontrols = (function () {
       var velocity = this.clock.getDelta() * 17;
       var camera = this.params.camera;
       var jumpAudio = this.params.playJumpAudio;
-      if (!deathZone) {
+      if (!deathZone && controlObject.position.y >= 10) {
         if (this.directions.forward && !sideCollision) {
           if (controlObject.position.y > 10) {
             controlObject.position.x += velocity + 0.15;

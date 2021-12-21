@@ -7,6 +7,8 @@ import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.
 
 import { mcontrols } from "./controls.js";
 
+let container = document.getElementById("container");
+
 class Game {
   constructor() {
     this.Initialize();
@@ -118,8 +120,7 @@ class Game {
   loadModelIntoScene() {
     // Configure and load mario
     this.mario.scale.set(6, 6, 6);
-    // this.mario.position.set(-100, 10, 20);
-    this.mario.position.set(218, 10, 20);
+    this.mario.position.set(-100, 10, 20);
     this.mario.rotation.y = 1.5;
     this.scene.add(this.mario);
     // Loads world
@@ -134,64 +135,65 @@ class Game {
     var sidePipe1 = new THREE.Mesh(geometry, material);
     sidePipe1.position.set(18, 10, 20);
     sidePipe1.geometry.computeBoundingBox();
-    // sidePipe1.visible = false;
+    sidePipe1.visible = false;
 
     var geometry = new THREE.BoxGeometry(9, 17, 12);
     var sidePipe2 = new THREE.Mesh(geometry, material);
     sidePipe2.position.set(69.5, 14, 20);
     sidePipe2.geometry.computeBoundingBox();
-    // sidePipe2.visible = false;
+    sidePipe2.visible = false;
 
     var geometry = new THREE.BoxGeometry(9, 22, 12);
     var sidePipe3 = new THREE.Mesh(geometry, material);
     sidePipe3.position.set(111, 19, 20);
     sidePipe3.geometry.computeBoundingBox();
-    // sidePipe3.visible = false;
+    sidePipe3.visible = false;
 
     var sidePipe4 = new THREE.Mesh(geometry, material);
     sidePipe4.position.set(168, 18, 20);
     sidePipe4.geometry.computeBoundingBox();
-    // sidePipe4.visible = false;
+    sidePipe4.visible = false;
 
     var geometry = new THREE.BoxGeometry(10, 0.1, 12);
     var topPipe1 = new THREE.Mesh(geometry, material);
     topPipe1.position.set(18, 23, 20);
     topPipe1.material.color.setHex(0xff0000);
     topPipe1.geometry.computeBoundingBox();
-    // topPipe1.visible = false;
+    topPipe1.visible = false;
 
     var geometry = new THREE.BoxGeometry(10, 0.1, 12);
     var topPipe2 = new THREE.Mesh(geometry, material);
     topPipe2.position.set(69.5, 28, 20);
     topPipe2.material.color.setHex(0xff0000);
     topPipe2.geometry.computeBoundingBox();
-    // topPipe2.visible = false;
+    topPipe2.visible = false;
 
     var geometry = new THREE.BoxGeometry(10, 0.1, 12);
     var topPipe3 = new THREE.Mesh(geometry, material);
     topPipe3.position.set(111, 32, 20);
     topPipe3.material.color.setHex(0xff0000);
     topPipe3.geometry.computeBoundingBox();
-    // topPipe3.visible = false;
+    topPipe3.visible = false;
 
     var geometry = new THREE.BoxGeometry(10, 0.1, 12);
     var topPipe4 = new THREE.Mesh(geometry, material);
     topPipe4.position.set(168, 32, 20);
     topPipe4.material.color.setHex(0xff0000);
     topPipe4.geometry.computeBoundingBox();
+    topPipe4.visible = false;
 
     var geometry = new THREE.BoxGeometry(17, 0.1, 50);
     var deathZone1 = new THREE.Mesh(geometry, material);
     deathZone1.position.set(235.5, 10, 20);
     deathZone1.material.color.setHex(0xff0000);
     deathZone1.geometry.computeBoundingBox();
-    // deathZone1.visible = false;
+    deathZone1.visible = false;
     var geometry = new THREE.BoxGeometry(14, 0.1, 50);
     var deathZone2 = new THREE.Mesh(geometry, material);
     deathZone2.position.set(329, 10, 20);
     deathZone2.material.color.setHex(0xff0000);
     deathZone2.geometry.computeBoundingBox();
-    // deathZone2.visible = false;
+    deathZone2.visible = false;
 
     this.scene.add(sidePipe1);
     this.scene.add(sidePipe2);
@@ -315,12 +317,17 @@ class Game {
     }
   }
 
+  gameOver() {
+    if (this.deathZoneCollision) {
+      container.style.visibility = "visible";
+    }
+  }
+
   RAF() {
     requestAnimationFrame((_) => {
       var delta = Math.min(this.clock.getDelta(), 0.1);
       this.RAF();
-      // console.log(this.collision);
-      // console.log(this.camera.position);
+      this.gameOver();
       this.controls.target.set(this.mario.position.x, 0, 0);
       this.controls.update();
       this.updateAnimations();
@@ -337,7 +344,6 @@ class Game {
 }
 
 let APP = null;
-
 window.onload = () => {
   APP = new Game();
 };
