@@ -84,8 +84,9 @@ class Game {
     var themeAudio = new THREE.Audio(themeListener);
     themeAudioLoader.load("./resources/themeSong.mp3", function (buffer) {
       themeAudio.setBuffer(buffer);
-      // themeAudio.autoplay = true;
-      // themeAudio.play();
+      themeAudio.setVolume(0.5);
+      themeAudio.autoplay = true;
+      themeAudio.play();
     });
   }
   async getMarioModel() {
