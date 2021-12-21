@@ -47,10 +47,11 @@ class Game {
     this.controls.update();
 
     this.clock = new THREE.Clock();
-    this.collision = false;
+    this.sideCollision = false;
+    this.topCollision = false;
     this.world = await this.getWorldModel();
     this.mario = await this.getMarioModel();
-    this.pipes = this.createPipes();
+    this.parts = this.createPipes();
     this.loadModelIntoScene();
     this.loadThemeAudio();
     const jumpAudioLoader = new THREE.AudioLoader();
@@ -65,7 +66,6 @@ class Game {
       camera: this.camera,
       playJumpAudio: () => jumpAudio.play(),
     });
-    this.CreateCloud(0);
     for (var i = -100; i < 1300; i += 100) {
       this.CreateCloud(i);
     }
@@ -127,47 +127,99 @@ class Game {
   createPipes() {
     var geometry = new THREE.BoxGeometry(9, 15, 12);
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    var pipe1 = new THREE.Mesh(geometry, material);
-    pipe1.position.set(18, 13, 20);
-    pipe1.geometry.computeBoundingBox();
-    pipe1.visible = false;
+    var sidePipe1 = new THREE.Mesh(geometry, material);
+    sidePipe1.position.set(18, 10, 20);
+    sidePipe1.geometry.computeBoundingBox();
+    sidePipe1.visible = false;
 
     var geometry = new THREE.BoxGeometry(9, 17, 12);
-    var pipe2 = new THREE.Mesh(geometry, material);
-    pipe2.position.set(69.5, 17, 20);
-    pipe2.geometry.computeBoundingBox();
-    pipe2.visible = false;
+    var sidePipe2 = new THREE.Mesh(geometry, material);
+    sidePipe2.position.set(69.5, 14, 20);
+    sidePipe2.geometry.computeBoundingBox();
+    sidePipe2.visible = false;
 
     var geometry = new THREE.BoxGeometry(9, 22, 12);
-    var pipe3 = new THREE.Mesh(geometry, material);
-    pipe3.position.set(111, 21, 20);
-    pipe3.geometry.computeBoundingBox();
-    pipe3.visible = false;
+    var sidePipe3 = new THREE.Mesh(geometry, material);
+    sidePipe3.position.set(111, 19, 20);
+    sidePipe3.geometry.computeBoundingBox();
+    sidePipe3.visible = false;
 
-    var pipe4 = new THREE.Mesh(geometry, material);
-    pipe4.position.set(168, 21, 20);
-    pipe4.geometry.computeBoundingBox();
-    pipe4.visible = false;
+    var sidePipe4 = new THREE.Mesh(geometry, material);
+    sidePipe4.position.set(168, 18, 20);
+    sidePipe4.geometry.computeBoundingBox();
+    sidePipe4.visible = false;
 
-    this.scene.add(pipe1);
-    this.scene.add(pipe2);
-    this.scene.add(pipe3);
-    this.scene.add(pipe4);
-    return [pipe1, pipe2, pipe3, pipe4];
+    var geometry = new THREE.BoxGeometry(10, 0.1, 12);
+    var topPipe1 = new THREE.Mesh(geometry, material);
+    topPipe1.position.set(18, 23, 20);
+    topPipe1.material.color.setHex(0xff0000);
+    topPipe1.geometry.computeBoundingBox();
+    // topPipe1.visible = false;
+
+    var geometry = new THREE.BoxGeometry(10, 0.1, 12);
+    var topPipe2 = new THREE.Mesh(geometry, material);
+    topPipe2.position.set(69.5, 28, 20);
+    topPipe2.material.color.setHex(0xff0000);
+    topPipe2.geometry.computeBoundingBox();
+    // topPipe2.visible = false;
+
+    var geometry = new THREE.BoxGeometry(10, 0.1, 12);
+    var topPipe3 = new THREE.Mesh(geometry, material);
+    topPipe3.position.set(111, 32, 20);
+    topPipe3.material.color.setHex(0xff0000);
+    topPipe3.geometry.computeBoundingBox();
+    // topPipe3.visible = false;
+
+    var geometry = new THREE.BoxGeometry(10, 0.1, 12);
+    var topPipe4 = new THREE.Mesh(geometry, material);
+    topPipe4.position.set(168, 32, 20);
+    topPipe4.material.color.setHex(0xff0000);
+    topPipe4.geometry.computeBoundingBox();
+    // topPipe4.visible = false;
+
+    this.scene.add(sidePipe1);
+    this.scene.add(sidePipe2);
+    this.scene.add(sidePipe3);
+    this.scene.add(sidePipe4);
+    this.scene.add(topPipe1);
+    this.scene.add(topPipe2);
+    this.scene.add(topPipe3);
+    this.scene.add(topPipe4);
+
+    var collisonParts = {
+      side: [sidePipe1, sidePipe2, sidePipe3, sidePipe4],
+      top: [topPipe1, topPipe2, topPipe3, topPipe4],
+    };
+    return collisonParts;
   }
   detectPipeCollision() {
     var marioBox = new THREE.Box3().setFromObject(this.mario);
-    var marioBox = new THREE.Box3().setFromObject(this.mario);
-    var pipeBox1 = new THREE.Box3().setFromObject(this.pipes[0]);
-    var pipeBox2 = new THREE.Box3().setFromObject(this.pipes[1]);
-    var pipeBox3 = new THREE.Box3().setFromObject(this.pipes[2]);
-    var pipeBox4 = new THREE.Box3().setFromObject(this.pipes[3]);
-    var collision1 = marioBox.intersectsBox(pipeBox1);
-    var collision2 = marioBox.intersectsBox(pipeBox2);
-    var collision3 = marioBox.intersectsBox(pipeBox3);
-    var collision4 = marioBox.intersectsBox(pipeBox4);
+    var sidePipeBox1 = new THREE.Box3().setFromObject(this.parts["side"][0]);
+    var sidePipeBox2 = new THREE.Box3().setFromObject(this.parts["side"][1]);
+    var sidePipeBox3 = new THREE.Box3().setFromObject(this.parts["side"][2]);
+    var sidePipeBox4 = new THREE.Box3().setFromObject(this.parts["side"][3]);
+    var sidecollision1 = marioBox.intersectsBox(sidePipeBox1);
+    var sidecollision2 = marioBox.intersectsBox(sidePipeBox2);
+    var sidecollision3 = marioBox.intersectsBox(sidePipeBox3);
+    var sidecollision4 = marioBox.intersectsBox(sidePipeBox4);
 
-    this.collision = collision1 || collision2 || collision3 || collision4;
+    var topPipeBox1 = new THREE.Box3().setFromObject(this.parts["top"][0]);
+    var topPipeBox2 = new THREE.Box3().setFromObject(this.parts["top"][1]);
+    var topPipeBox3 = new THREE.Box3().setFromObject(this.parts["top"][2]);
+    var topPipeBox4 = new THREE.Box3().setFromObject(this.parts["top"][3]);
+    var topcollision1 = marioBox.intersectsBox(topPipeBox1);
+    var topcollision2 = marioBox.intersectsBox(topPipeBox2);
+    var topcollision3 = marioBox.intersectsBox(topPipeBox3);
+    var topcollision4 = marioBox.intersectsBox(topPipeBox4);
+
+    this.sideCollision =
+      sidecollision1 || sidecollision2 || sidecollision3 || sidecollision4;
+    this.topCollision =
+      topcollision1 || topcollision2 || topcollision3 || topcollision4;
+    // if (this.topCollision && !this.movementControls.directions.up) {
+    //   console.log("stay");
+    //   this.mario.position.y = this.mario.position.y;
+    // }
   }
   idleAnimation() {
     this.animationAction.stop();
@@ -193,7 +245,6 @@ class Game {
   }
 
   CreateCloud(x) {
-    console.log("creating clouds at ", x);
     const mat = new THREE.MeshPhongMaterial({
       color: "white",
       flatShading: true,
@@ -251,7 +302,10 @@ class Game {
       this.controls.target.set(this.mario.position.x, 0, 0);
       this.controls.update();
       this.updateAnimations();
-      this.movementControls.controlsUpdate(this.collision);
+      this.movementControls.controlsUpdate(
+        this.sideCollision,
+        this.topCollision
+      );
       this.currentMixer.update(delta);
       this.detectPipeCollision();
       this.renderer.render(this.scene, this.camera);
