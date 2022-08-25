@@ -1,9 +1,10 @@
-import * as THREE from "https://threejs.org/build/three.module.js";
+// import * as THREE from "https://threejs.org/build/three.module.js";
+// import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
+import * as THREE from 'three';
+import { OrbitControls } from 'OrbitControls';
 import { GUI } from "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js";
-import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://threejs.org/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
-// import { InteractionManager } from "https://cdn.jsdelivr.net/npm/three.interactive@1.1.0/build/three.interactive.js";
 
 import { mcontrols } from "./controls.js";
 
@@ -64,12 +65,12 @@ class Game {
     var jumpAudio = new THREE.Audio(jumpListener);
     jumpAudioLoader.load("./resources/jump.mp3", function (buffer) {
       jumpAudio.setBuffer(buffer);
-      jumpAudio.setVolume(0.3);
+      jumpAudio.setVolume(0.15);
     });
     this.movementControls = new mcontrols.MarioControls({
       target: this.mario,
       camera: this.camera,
-      playJumpAudio: () => jumpAudio.play(),
+      playJumpAudio: () => jumpAudio.play() ,
     });
     for (var i = -100; i < 1300; i += 100) {
       this.CreateCloud(i);
@@ -84,7 +85,7 @@ class Game {
     var themeAudio = new THREE.Audio(themeListener);
     themeAudioLoader.load("./resources/themeSong.mp3", function (buffer) {
       themeAudio.setBuffer(buffer);
-      themeAudio.setVolume(0.5);
+      themeAudio.setVolume(0.09);
       themeAudio.autoplay = true;
       themeAudio.play();
     });

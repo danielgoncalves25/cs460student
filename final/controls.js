@@ -74,7 +74,7 @@ export const mcontrols = (function () {
       }
       // console.log(topCollision);
       const controlObject = this.params.target;
-      var velocity = this.clock.getDelta() * 17;
+      var velocity = this.clock.getDelta() * 30;
       var camera = this.params.camera;
       var jumpAudio = this.params.playJumpAudio;
       if (!deathZone && controlObject.position.y >= 10) {
